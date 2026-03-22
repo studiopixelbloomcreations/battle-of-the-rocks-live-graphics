@@ -43,27 +43,54 @@ class ControlPanel {
       'team1-logo': {
         title: 'Crop Team 1 Logo',
         fileName: 'team1_logo',
-        buildMessage: (url) => ({ battingTeam: { logoUrl: url } })
+        buildMessage: (url) => {
+          const instanceKey = document.getElementById('batting-instance').value;
+          return {
+            type: 'update_team_library',
+            data: {
+              instanceKey,
+              teamData: { logoUrl: url }
+            }
+          };
+        }
       },
       'team2-logo': {
         title: 'Crop Team 2 Logo',
         fileName: 'team2_logo',
-        buildMessage: (url) => ({ bowlingTeam: { logoUrl: url } })
+        buildMessage: (url) => {
+          const instanceKey = document.getElementById('bowling-instance').value;
+          return {
+            type: 'update_team_library',
+            data: {
+              instanceKey,
+              teamData: { logoUrl: url }
+            }
+          };
+        }
       },
       'striker-photo': {
         title: 'Crop Striker Portrait',
         fileName: 'striker_photo',
-        buildMessage: (url) => ({ striker: { photoUrl: url } })
+        buildMessage: (url) => ({
+          type: 'update_media',
+          data: { striker: { photoUrl: url } }
+        })
       },
       'nonstriker-photo': {
         title: 'Crop Non-Striker Portrait',
         fileName: 'nonstriker_photo',
-        buildMessage: (url) => ({ nonStriker: { photoUrl: url } })
+        buildMessage: (url) => ({
+          type: 'update_media',
+          data: { nonStriker: { photoUrl: url } }
+        })
       },
       'lowerthird-photo': {
         title: 'Crop Lower Third Portrait',
         fileName: 'lower_third_photo',
-        buildMessage: (url) => ({ lowerThirdData: { photoUrl: url } })
+        buildMessage: (url) => ({
+          type: 'update_media',
+          data: { lowerThirdData: { photoUrl: url } }
+        })
       }
     };
     this.init();
@@ -592,10 +619,7 @@ class ControlPanel {
     try {
       const result = await window.saveGraphicAsset(imageData, target.fileName);
 
-      this.send({
-        type: 'update_media',
-        data: target.buildMessage(result.url)
-      });
+      this.send(target.buildMessage(result.url));
       showNotification('Image cropped and applied');
       this.closeCropper();
     } catch (error) {

@@ -568,13 +568,13 @@
 }
 
 @keyframes introLogoFloatLeft {
-  0%, 100% { transform: translateY(0) rotate(-2deg); }
-  50% { transform: translateY(-8px) rotate(2deg); }
+  0%, 100% { transform: translateY(0) rotate(-3deg) scale(1); }
+  50% { transform: translateY(-10px) rotate(3deg) scale(1.025); }
 }
 
 @keyframes introLogoFloatRight {
-  0%, 100% { transform: translateY(0) rotate(2deg); }
-  50% { transform: translateY(-8px) rotate(-2deg); }
+  0%, 100% { transform: translateY(0) rotate(3deg) scale(1); }
+  50% { transform: translateY(-10px) rotate(-3deg) scale(1.025); }
 }
 
 .team-logo {

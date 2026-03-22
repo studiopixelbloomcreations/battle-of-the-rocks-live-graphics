@@ -286,6 +286,29 @@
         }
         next.lastEvent = 'media_update';
         break;
+      case 'update_team_library':
+        if (data.instanceKey && next.teamLibrary[data.instanceKey]) {
+          next.teamLibrary[data.instanceKey] = {
+            ...next.teamLibrary[data.instanceKey],
+            ...(data.teamData || {})
+          };
+
+          if (next.battingTeam.name === next.teamLibrary[data.instanceKey].name) {
+            next.battingTeam = {
+              ...next.battingTeam,
+              ...(data.teamData || {})
+            };
+          }
+
+          if (next.bowlingTeam.name === next.teamLibrary[data.instanceKey].name) {
+            next.bowlingTeam = {
+              ...next.bowlingTeam,
+              ...(data.teamData || {})
+            };
+          }
+        }
+        next.lastEvent = 'team_library_update';
+        break;
       case 'update_intro_meta':
         next.introData = {
           ...next.introData,
