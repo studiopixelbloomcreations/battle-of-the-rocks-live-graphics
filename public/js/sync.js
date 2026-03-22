@@ -90,6 +90,29 @@
     return JSON.parse(JSON.stringify(value));
   }
 
+  function isPlainObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function deepMerge(base, incoming) {
+    if (!isPlainObject(base) || !isPlainObject(incoming)) {
+      return incoming === undefined ? clone(base) : incoming;
+    }
+
+    const result = clone(base);
+    Object.keys(incoming).forEach((key) => {
+      const baseValue = result[key];
+      const incomingValue = incoming[key];
+
+      if (isPlainObject(baseValue) && isPlainObject(incomingValue)) {
+        result[key] = deepMerge(baseValue, incomingValue);
+      } else {
+        result[key] = incomingValue;
+      }
+    });
+    return result;
+  }
+
   function getConfiguredWebSocketUrl() {
     const queryValue = new URLSearchParams(window.location.search).get('ws');
     if (queryValue) return queryValue;
@@ -125,7 +148,7 @@
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (!stored) return clone(DEFAULT_STATE);
-      return { ...clone(DEFAULT_STATE), ...JSON.parse(stored) };
+      return deepMerge(DEFAULT_STATE, JSON.parse(stored));
     } catch (error) {
       console.error('Failed to load stored state:', error);
       return clone(DEFAULT_STATE);
@@ -349,7 +372,8 @@
           this.state = clone(DEFAULT_STATE);
           await this.supabase.from(table).upsert({ id: rowId, state: this.state });
         } else {
-          this.state = { ...clone(DEFAULT_STATE), ...data.state };
+          this.state = deepMerge(DEFAULT_STATE, data.state || {});
+          await this.supabase.from(table).upsert({ id: rowId, state: this.state });
         }
 
         this.channel = this.supabase
@@ -364,7 +388,7 @@
             },
             (payload) => {
               if (payload.new?.state) {
-                this.state = { ...clone(DEFAULT_STATE), ...payload.new.state };
+                this.state = deepMerge(DEFAULT_STATE, payload.new.state || {});
                 this.onMessage({ type: 'state_update', data: this.state });
               }
             }
@@ -449,11 +473,12 @@
       if (this.mode === 'supabase' && this.supabase) {
         const nextState = applyMessageToState(this.state || loadStaticState(), message, (patch, delay) => {
           window.setTimeout(async () => {
-            this.state = { ...(this.state || {}), ...patch };
+            this.state = deepMerge(this.state || DEFAULT_STATE, patch);
             this.onMessage({ type: 'state_update', data: this.state });
             await this.supabase
               .from(window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state')
-              .upsert({ id: window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main', state: this.state });
+              .update({ state: this.state, updated_at: new Date().toISOString() })
+              .eq('id', window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main');
           }, delay);
         });
 
@@ -461,7 +486,8 @@
         this.onMessage({ type: 'state_update', data: this.state });
         this.supabase
           .from(window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state')
-          .upsert({ id: window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main', state: this.state });
+          .update({ state: this.state, updated_at: new Date().toISOString() })
+          .eq('id', window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main');
         return;
       }
 
