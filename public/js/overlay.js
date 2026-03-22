@@ -566,6 +566,9 @@ class CricketGraphicsEngine {
     if (this.currentState.showFourAnimation) {
       this.triggerFourAnimation();
     }
+    if (this.currentState.showIntro) {
+      this.triggerIntroAnimation();
+    }
   }
 
   restartAnimations(selectors) {
@@ -650,6 +653,20 @@ class CricketGraphicsEngine {
       '.four-ball-dash',
       '.four-number',
       '.four-text'
+    ]);
+  }
+
+  triggerIntroAnimation() {
+    this.restartAnimations([
+      '.ring-a',
+      '.ring-b',
+      '.ring-c',
+      '.team-left .team-logo',
+      '.team-right .team-logo',
+      '.intro-team-name.top',
+      '.intro-team-name.bottom',
+      '.intro-match-label',
+      '.venue'
     ]);
   }
 }

@@ -588,11 +588,15 @@
 }
 
 .team-left .team-logo {
-  animation: introLogoFloatLeft 3.6s ease-in-out infinite;
+  animation:
+    introLogoLeftEnter 0.95s cubic-bezier(0.2, 0.9, 0.2, 1),
+    introLogoFloatLeft 3.6s ease-in-out 1s infinite;
 }
 
 .team-right .team-logo {
-  animation: introLogoFloatRight 3.6s ease-in-out infinite;
+  animation:
+    introLogoRightEnter 0.95s cubic-bezier(0.2, 0.9, 0.2, 1),
+    introLogoFloatRight 3.6s ease-in-out 1s infinite;
 }
 
 .team-logo-3d {
@@ -633,10 +637,46 @@
 }
 
 .intro-center-stack {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+.intro-vs-rings {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  width: 330px;
+  height: 330px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.intro-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 0 26px rgba(179, 204, 255, 0.14),
+    inset 0 0 16px rgba(255, 255, 255, 0.08);
+  opacity: 0;
+}
+
+.ring-b {
+  inset: 28px;
+  animation: introRingPulse 1.1s ease-out 0.08s both;
+}
+
+.ring-c {
+  inset: 58px;
+  animation: introRingPulse 1.1s ease-out 0.16s both;
+}
+
+.ring-a {
+  animation: introRingPulse 1.1s ease-out both;
 }
 
 .intro-team-name {
@@ -653,11 +693,11 @@
 }
 
 .intro-team-name.top {
-  animation: slideInRight 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+  animation: introNameTop 1.1s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .intro-team-name.bottom {
-  animation: slideInLeft 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+  animation: introNameBottom 1.1s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .vs-badge {
@@ -710,6 +750,7 @@
   font-size: 20px;
   font-weight: 900;
   letter-spacing: 1.6px;
+  animation: introBarRise 1.05s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
 .venue {
@@ -729,6 +770,91 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.24),
     0 14px 28px rgba(0, 0, 0, 0.18);
+  animation: introBarRise 1.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes introLogoLeftEnter {
+  0% {
+    transform: perspective(1000px) translateX(-220px) translateY(14px) rotateX(34deg) rotateY(-36deg) scale(0.72);
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(1000px) translateX(0) translateY(0) rotateX(16deg) rotateY(-8deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes introLogoRightEnter {
+  0% {
+    transform: perspective(1000px) translateX(220px) translateY(14px) rotateX(34deg) rotateY(36deg) scale(0.72);
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(1000px) translateX(0) translateY(0) rotateX(16deg) rotateY(8deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes introRingPulse {
+  0% {
+    transform: scale(0.72);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.64;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+}
+
+@keyframes introNameTop {
+  0% {
+    transform: translateY(-22px);
+    opacity: 0;
+  }
+  45% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes introNameBottom {
+  0% {
+    transform: translateY(22px);
+    opacity: 0;
+  }
+  45% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes introBarRise {
+  0% {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+  58% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .hidden {
