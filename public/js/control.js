@@ -149,7 +149,7 @@ class ControlPanel {
   }
 
   applyInstanceToFields(side, instanceKey) {
-    const config = TEAM_INSTANCES[instanceKey];
+    const config = this.getTeamInstanceConfig(instanceKey);
     if (!config) {
       return;
     }
@@ -159,12 +159,22 @@ class ControlPanel {
       document.getElementById('team1-short').value = config.shortName;
       document.getElementById('team1-color').value = config.color;
       this.updateMediaPreview('team1-logo-preview', config.logoUrl, config.shortName);
+      document.getElementById('bc-title').value = config.name.toUpperCase();
     } else {
       document.getElementById('team2-name').value = config.name;
       document.getElementById('team2-short').value = config.shortName;
       document.getElementById('team2-color').value = config.color;
       this.updateMediaPreview('team2-logo-preview', config.logoUrl, config.shortName);
     }
+  }
+
+  getTeamInstanceConfig(instanceKey) {
+    const baseConfig = TEAM_INSTANCES[instanceKey];
+    const libraryConfig = this.currentState?.teamLibrary?.[instanceKey];
+    return {
+      ...baseConfig,
+      ...libraryConfig
+    };
   }
 
   syncInstanceSelectors(state) {
@@ -200,7 +210,7 @@ class ControlPanel {
       document.getElementById('intro-match-label').value = state.introData?.matchLabel || 'MATCH 3';
       document.getElementById('intro-venue-line').value = state.introData?.venueLine || `LIVE FROM ${state.venue.toUpperCase()}`;
       document.getElementById('bc-title').value = state.battingCard?.title || state.battingTeam.name.toUpperCase();
-      document.getElementById('bc-subtitle').value = state.battingCard?.subtitle || 'LIVE BATTING CARD';
+      document.getElementById('bc-subtitle').value = state.battingCard?.subtitle || 'BATTLE OF THE ROCKS';
       document.getElementById('bc-extras').value = state.battingCard?.extras ?? 0;
       document.getElementById('bc-overs').value = state.battingCard?.overs ?? '0.0';
       document.getElementById('bc-total').value = state.battingCard?.total || '0-0';
@@ -598,14 +608,14 @@ class ControlPanel {
 const controlPanel = new ControlPanel();
 
 function updateMatchSetup() {
-  const battingInstance = TEAM_INSTANCES[document.getElementById('batting-instance').value];
-  const bowlingInstance = TEAM_INSTANCES[document.getElementById('bowling-instance').value];
+  const bowlingInstance = controlPanel.getTeamInstanceConfig(document.getElementById('bowling-instance').value);
+  const battingConfig = controlPanel.getTeamInstanceConfig(document.getElementById('batting-instance').value);
   const data = {
     battingTeam: {
       name: document.getElementById('team1-name').value,
       shortName: document.getElementById('team1-short').value,
       color: document.getElementById('team1-color').value,
-      logoUrl: battingInstance?.logoUrl || controlPanel.currentState?.battingTeam?.logoUrl || ''
+      logoUrl: battingConfig?.logoUrl || controlPanel.currentState?.battingTeam?.logoUrl || ''
     },
     bowlingTeam: {
       name: document.getElementById('team2-name').value,
@@ -788,7 +798,7 @@ function updateBattingCard() {
     data: {
       battingCard: {
         title: document.getElementById('bc-title').value,
-        subtitle: document.getElementById('bc-subtitle').value,
+        subtitle: document.getElementById('bc-subtitle').value || 'BATTLE OF THE ROCKS',
         extras: document.getElementById('bc-extras').value,
         overs: document.getElementById('bc-overs').value,
         total: document.getElementById('bc-total').value,

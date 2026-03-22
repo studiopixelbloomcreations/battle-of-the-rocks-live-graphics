@@ -500,11 +500,7 @@
 }
 
 #intro-layer {
-  background:
-    radial-gradient(circle at 50% 16%, rgba(173, 198, 255, 0.24), transparent 22%),
-    radial-gradient(circle at 18% 72%, rgba(61, 144, 255, 0.14), transparent 24%),
-    radial-gradient(circle at 82% 72%, rgba(255, 193, 71, 0.16), transparent 24%),
-    linear-gradient(135deg, rgba(2, 7, 18, 0.96), rgba(10, 20, 36, 0.92), rgba(2, 7, 18, 0.96));
+  background: transparent;
 }
 
 .intro-content {
@@ -524,25 +520,14 @@
   position: relative;
   padding: 44px 54px;
   border-radius: 36px;
-  background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.2), transparent 18%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)),
-    linear-gradient(180deg, rgba(6, 14, 29, 0.86), rgba(12, 24, 42, 0.76));
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 40px 110px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -28px 44px rgba(0, 0, 0, 0.14);
-  backdrop-filter: blur(28px) saturate(165%);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .intro-shell::before {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border-radius: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  pointer-events: none;
+  display: none;
 }
 
 .teams-container {
@@ -563,9 +548,9 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 10% 8%, rgba(255, 255, 255, 0.16), transparent 12%),
-    radial-gradient(circle at 90% 8%, rgba(255, 255, 255, 0.16), transparent 12%);
-  opacity: 0.9;
+    radial-gradient(circle at 9% 7%, rgba(255, 255, 255, 0.18), transparent 10%),
+    radial-gradient(circle at 91% 7%, rgba(255, 255, 255, 0.18), transparent 10%);
+  opacity: 0.72;
 }
 
 .team-box {
@@ -582,6 +567,16 @@
   animation: slideInRight 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
+@keyframes introLogoFloatLeft {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes introLogoFloatRight {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-8px) rotate(-2deg); }
+}
+
 .team-logo {
   width: 180px;
   height: 180px;
@@ -589,6 +584,14 @@
   box-shadow:
     0 30px 55px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.team-left .team-logo {
+  animation: introLogoFloatLeft 3.6s ease-in-out infinite;
+}
+
+.team-right .team-logo {
+  animation: introLogoFloatRight 3.6s ease-in-out infinite;
 }
 
 .team-logo-3d {
@@ -628,7 +631,8 @@
   line-height: 1;
   text-shadow:
     0 2px 0 rgba(255,255,255,0.28),
-    0 12px 24px rgba(0,0,0,0.22);
+    0 12px 24px rgba(0,0,0,0.22),
+    0 0 22px rgba(255,255,255,0.12);
 }
 
 .intro-team-name.top {

@@ -92,11 +92,25 @@
     },
     battingCard: {
       title: 'MALIYADEVA COLLEGE',
-      subtitle: 'LIVE BATTING CARD',
+      subtitle: 'BATTLE OF THE ROCKS',
       extras: 14,
       overs: '23.5',
       total: '225-5',
       players: DEFAULT_BATTING_CARD_PLAYERS
+    },
+    teamLibrary: {
+      'maliyadeva': {
+        name: 'Maliyadeva College',
+        shortName: 'MCC',
+        color: '#d61f2c',
+        logoUrl: '/uploads/team1_logo_1774120217186.png'
+      },
+      'st-annes': {
+        name: "St Anne's College",
+        shortName: 'SAC',
+        color: '#17a34a',
+        logoUrl: '/uploads/team2_logo_1774120324627.png'
+      }
     },
     showScorebug: true,
     showFullScoreboard: false,
@@ -185,6 +199,10 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
+  function getLibraryKeyByTeamName(teamLibrary, teamName) {
+    return Object.keys(teamLibrary || {}).find((key) => teamLibrary[key]?.name === teamName) || null;
+  }
+
   function applyMessageToState(state, message, scheduleReset) {
     const next = clone(state);
     const { type, data } = message;
@@ -193,6 +211,30 @@
       case 'update_score':
         if (data.battingTeam) Object.assign(next.battingTeam, data.battingTeam);
         if (data.bowlingTeam) Object.assign(next.bowlingTeam, data.bowlingTeam);
+        if (data.battingTeam?.name) {
+          next.battingCard = {
+            ...next.battingCard,
+            title: data.battingTeam.name.toUpperCase()
+          };
+        }
+        if (data.battingTeam?.name) {
+          const battingKey = getLibraryKeyByTeamName(next.teamLibrary, data.battingTeam.name);
+          if (battingKey) {
+            next.teamLibrary[battingKey] = {
+              ...next.teamLibrary[battingKey],
+              ...data.battingTeam
+            };
+          }
+        }
+        if (data.bowlingTeam?.name) {
+          const bowlingKey = getLibraryKeyByTeamName(next.teamLibrary, data.bowlingTeam.name);
+          if (bowlingKey) {
+            next.teamLibrary[bowlingKey] = {
+              ...next.teamLibrary[bowlingKey],
+              ...data.bowlingTeam
+            };
+          }
+        }
         if (data.venue) next.venue = data.venue;
         if (data.matchType) next.matchType = data.matchType;
         if (data.thisOver) next.thisOver = data.thisOver;
@@ -216,6 +258,24 @@
       case 'update_media':
         if (data.battingTeam) Object.assign(next.battingTeam, data.battingTeam);
         if (data.bowlingTeam) Object.assign(next.bowlingTeam, data.bowlingTeam);
+        if (data.battingTeam) {
+          const battingKey = getLibraryKeyByTeamName(next.teamLibrary, next.battingTeam.name);
+          if (battingKey) {
+            next.teamLibrary[battingKey] = {
+              ...next.teamLibrary[battingKey],
+              ...data.battingTeam
+            };
+          }
+        }
+        if (data.bowlingTeam) {
+          const bowlingKey = getLibraryKeyByTeamName(next.teamLibrary, next.bowlingTeam.name);
+          if (bowlingKey) {
+            next.teamLibrary[bowlingKey] = {
+              ...next.teamLibrary[bowlingKey],
+              ...data.bowlingTeam
+            };
+          }
+        }
         if (data.striker) Object.assign(next.striker, data.striker);
         if (data.nonStriker) Object.assign(next.nonStriker, data.nonStriker);
         if (data.lowerThirdData) {

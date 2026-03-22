@@ -465,7 +465,7 @@ class CricketGraphicsEngine {
   updateBattingCard(state) {
     const card = state.battingCard || {};
     document.getElementById('bc-team-title').textContent = card.title || state.battingTeam.name.toUpperCase();
-    document.getElementById('bc-team-subtitle').textContent = card.subtitle || 'LIVE BATTING CARD';
+    document.getElementById('bc-team-subtitle').textContent = card.subtitle || 'BATTLE OF THE ROCKS';
     document.getElementById('bc-extras-display').textContent = card.extras ?? 0;
     document.getElementById('bc-overs-display').textContent = card.overs ?? '0.0';
     document.getElementById('bc-total-display').textContent = card.total || `${state.battingTeam.runs}-${state.battingTeam.wickets}`;
