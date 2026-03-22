@@ -330,6 +330,10 @@
       this.socket = null;
       this.channel = null;
       this.state = null;
+      this.pollTimer = null;
+      this.supabaseTable = null;
+      this.supabaseRowId = null;
+      this.lastRemoteStateJson = '';
       this.fallbackStarted = false;
       this.init();
     }
@@ -356,13 +360,9 @@
           window.BIG_MATCH_CONFIG.supabaseAnonKey
         );
 
-        const table = window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state';
-        const rowId = window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main';
-        const { data, error } = await this.supabase
-          .from(table)
-          .select('state')
-          .eq('id', rowId)
-          .maybeSingle();
+        this.supabaseTable = window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state';
+        this.supabaseRowId = window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main';
+        const { data, error } = await this.fetchSupabaseState();
 
         if (error && error.code !== 'PGRST116') {
           throw error;
@@ -370,11 +370,13 @@
 
         if (!data) {
           this.state = clone(DEFAULT_STATE);
-          await this.supabase.from(table).upsert({ id: rowId, state: this.state });
+          await this.persistSupabaseState(this.state);
         } else {
           this.state = deepMerge(DEFAULT_STATE, data.state || {});
-          await this.supabase.from(table).upsert({ id: rowId, state: this.state });
+          await this.persistSupabaseState(this.state);
         }
+
+        this.lastRemoteStateJson = JSON.stringify(this.state);
 
         this.channel = this.supabase
           .channel('graphics-state-channel')
@@ -383,17 +385,23 @@
             {
               event: '*',
               schema: 'public',
-              table,
-              filter: `id=eq.${rowId}`
+              table: this.supabaseTable,
+              filter: `id=eq.${this.supabaseRowId}`
             },
             (payload) => {
               if (payload.new?.state) {
                 this.state = deepMerge(DEFAULT_STATE, payload.new.state || {});
+                this.lastRemoteStateJson = JSON.stringify(this.state);
                 this.onMessage({ type: 'state_update', data: this.state });
               }
             }
           )
-          .subscribe();
+          .subscribe((status) => {
+            const connected = status === 'SUBSCRIBED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT';
+            this.onConnectionChange(connected, 'supabase');
+          });
+
+        this.startSupabasePolling();
 
         this.onConnectionChange(true, 'supabase');
         this.onMessage({ type: 'init', data: this.state });
@@ -407,6 +415,64 @@
           }
         }, 1400);
       }
+    }
+
+    async fetchSupabaseState() {
+      return this.supabase
+        .from(this.supabaseTable)
+        .select('state')
+        .eq('id', this.supabaseRowId)
+        .maybeSingle();
+    }
+
+    async persistSupabaseState(state) {
+      const payload = {
+        id: this.supabaseRowId,
+        state,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await this.supabase
+        .from(this.supabaseTable)
+        .upsert(payload, { onConflict: 'id' });
+
+      if (error) {
+        console.error('Supabase write failed:', error);
+        throw error;
+      }
+    }
+
+    startSupabasePolling() {
+      if (this.pollTimer) {
+        window.clearInterval(this.pollTimer);
+      }
+
+      this.pollTimer = window.setInterval(async () => {
+        if (this.mode !== 'supabase' || !this.supabase) {
+          return;
+        }
+
+        try {
+          const { data, error } = await this.fetchSupabaseState();
+          if (error || !data?.state) {
+            if (error) {
+              console.error('Supabase poll failed:', error);
+            }
+            return;
+          }
+
+          const normalizedState = deepMerge(DEFAULT_STATE, data.state || {});
+          const nextJson = JSON.stringify(normalizedState);
+
+          if (nextJson !== this.lastRemoteStateJson) {
+            this.state = normalizedState;
+            this.lastRemoteStateJson = nextJson;
+            this.onMessage({ type: 'state_update', data: this.state });
+          }
+        } catch (error) {
+          console.error('Supabase polling exception:', error);
+        }
+      }, 1200);
     }
 
     tryWebSocket() {
@@ -474,20 +540,22 @@
         const nextState = applyMessageToState(this.state || loadStaticState(), message, (patch, delay) => {
           window.setTimeout(async () => {
             this.state = deepMerge(this.state || DEFAULT_STATE, patch);
+            this.lastRemoteStateJson = JSON.stringify(this.state);
             this.onMessage({ type: 'state_update', data: this.state });
-            await this.supabase
-              .from(window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state')
-              .update({ state: this.state, updated_at: new Date().toISOString() })
-              .eq('id', window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main');
+            try {
+              await this.persistSupabaseState(this.state);
+            } catch (error) {
+              console.error('Supabase delayed patch write failed:', error);
+            }
           }, delay);
         });
 
         this.state = nextState;
+        this.lastRemoteStateJson = JSON.stringify(this.state);
         this.onMessage({ type: 'state_update', data: this.state });
-        this.supabase
-          .from(window.BIG_MATCH_CONFIG.supabaseStateTable || 'graphic_state')
-          .update({ state: this.state, updated_at: new Date().toISOString() })
-          .eq('id', window.BIG_MATCH_CONFIG.supabaseStateRowId || 'main');
+        this.persistSupabaseState(this.state).catch((error) => {
+          console.error('Supabase write failed:', error);
+        });
         return;
       }
 
