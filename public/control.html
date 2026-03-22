@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Broadcast Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/control.css">
+</head>
+<body>
+  <div class="control-container">
+    <header class="control-header">
+      <div class="header-title">
+        <span class="header-icon">CR</span>
+        <div>
+          <h1>Cricket Broadcast Control</h1>
+          <p>Premium live graphics control, media prep, and on-air triggers</p>
+        </div>
+      </div>
+      <div class="connection-status" id="connection-status">
+        <span class="status-dot"></span>
+        <span class="status-text">Disconnected</span>
+      </div>
+    </header>
+
+    <main class="control-main">
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Setup</span>Match Setup</h2>
+        <div class="instance-panel">
+          <div class="predictor-title-row">
+            <div>
+              <div class="predictor-title">Instance</div>
+              <div class="predictor-subtitle">Choose which team is batting and which team is bowling</div>
+            </div>
+          </div>
+          <div class="control-grid">
+            <div class="input-group">
+              <label>Batting Instance</label>
+              <select id="batting-instance">
+                <option value="maliyadeva">Maliyadeva College</option>
+                <option value="st-annes">St Anne's College</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Bowling Instance</label>
+              <select id="bowling-instance">
+                <option value="st-annes">St Anne's College</option>
+                <option value="maliyadeva">Maliyadeva College</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="control-grid">
+            <div class="input-group">
+              <label>Team 1 (Batting)</label>
+              <input type="text" id="team1-name" value="Maliyadeva College">
+              <input type="text" id="team1-short" value="MCC" class="short-input">
+              <input type="color" id="team1-color" value="#d61f2c">
+            </div>
+            <div class="input-group">
+              <label>Team 2 (Bowling)</label>
+              <input type="text" id="team2-name" value="St Anne's College">
+              <input type="text" id="team2-short" value="SAC" class="short-input">
+              <input type="color" id="team2-color" value="#17a34a">
+            </div>
+          <div class="input-group">
+            <label>Venue</label>
+            <input type="text" id="match-venue" value="Wankhede Stadium">
+          </div>
+          <div class="input-group">
+            <label>Match Type</label>
+            <select id="match-type">
+              <option value="T20">T20</option>
+              <option value="ODI">ODI</option>
+              <option value="TEST">Test</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="media-grid">
+          <div class="media-card">
+            <div class="media-preview team" id="team1-logo-preview"><span>MI</span></div>
+            <div class="media-copy">
+              <div class="media-title">Team 1 Logo</div>
+              <div class="media-subtitle">Used in score bug, intro, and comparison graphics</div>
+            </div>
+            <button class="btn btn-secondary media-action" type="button" data-media-target="team1-logo">Upload & Crop</button>
+          </div>
+
+          <div class="media-card">
+            <div class="media-preview team" id="team2-logo-preview"><span>CSK</span></div>
+            <div class="media-copy">
+              <div class="media-title">Team 2 Logo</div>
+              <div class="media-subtitle">Used in intro and team matchup graphics</div>
+            </div>
+            <button class="btn btn-secondary media-action" type="button" data-media-target="team2-logo">Upload & Crop</button>
+          </div>
+        </div>
+
+        <div class="predictor-panel">
+          <div class="predictor-title-row">
+            <div>
+              <div class="predictor-title">Win Predictor Colors</div>
+              <div class="predictor-subtitle">Three colors for batting side and three for bowling side</div>
+            </div>
+          </div>
+          <div class="control-grid">
+            <div class="input-group">
+              <label>Batting Color 1</label>
+              <input type="color" id="wp-team1-color-1" value="#7a0710">
+            </div>
+            <div class="input-group">
+              <label>Batting Color 2</label>
+              <input type="color" id="wp-team1-color-2" value="#d61f2c">
+            </div>
+            <div class="input-group">
+              <label>Batting Color 3</label>
+              <input type="color" id="wp-team1-color-3" value="#ff9a7a">
+            </div>
+            <div class="input-group">
+              <label>Bowling Color 1</label>
+              <input type="color" id="wp-team2-color-1" value="#0f5a2a">
+            </div>
+            <div class="input-group">
+              <label>Bowling Color 2</label>
+              <input type="color" id="wp-team2-color-2" value="#17a34a">
+            </div>
+            <div class="input-group">
+              <label>Bowling Color 3</label>
+              <input type="color" id="wp-team2-color-3" value="#9af0b0">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="updateMatchSetup()">Update Match Setup</button>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Score</span>Score Control</h2>
+        <div class="score-grid">
+          <div class="score-box">
+            <h3>Batting Team</h3>
+            <div class="input-row">
+              <div class="input-group small"><label>Runs</label><input type="number" id="batting-runs" value="142" min="0"></div>
+              <div class="input-group small"><label>Wickets</label><input type="number" id="batting-wickets" value="3" min="0" max="10"></div>
+              <div class="input-group small"><label>Overs</label><input type="number" id="batting-overs" value="14.2" step="0.1"></div>
+            </div>
+          </div>
+
+          <div class="score-box">
+            <h3>Bowling Team</h3>
+            <div class="input-row">
+              <div class="input-group small"><label>Runs</label><input type="number" id="bowling-runs" value="0" min="0"></div>
+              <div class="input-group small"><label>Wickets</label><input type="number" id="bowling-wickets" value="0" min="0" max="10"></div>
+              <div class="input-group small"><label>Overs</label><input type="number" id="bowling-overs" value="0" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="predictor-panel">
+          <div class="predictor-title-row">
+            <div>
+              <div class="predictor-title">Win Predictor</div>
+              <div class="predictor-subtitle">Manual on-air probability strip under the score bug</div>
+            </div>
+            <button class="btn btn-secondary predictor-auto" type="button" onclick="autoWinPredictor()">Auto Set</button>
+          </div>
+          <div class="input-row">
+            <div class="input-group small"><label>Team 1 %</label><input type="number" id="wp-team1" value="68" min="0" max="100"></div>
+            <div class="input-group small"><label>Team 2 %</label><input type="number" id="wp-team2" value="32" min="0" max="100"></div>
+            <div class="input-group"><label>Label</label><input type="text" id="wp-label" value="Win Predictor"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="updateScore()">Update Score</button>
+        <button class="btn btn-secondary stacked-action" type="button" onclick="updateWinPredictor()">Update Win Predictor</button>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Bats</span>Batsmen</h2>
+
+        <div class="media-grid compact">
+          <div class="media-card">
+            <div class="media-preview portrait" id="striker-photo-preview"><span>RS</span></div>
+            <div class="media-copy">
+              <div class="media-title">Striker Portrait</div>
+              <div class="media-subtitle">Player intro card headshot</div>
+            </div>
+            <button class="btn btn-secondary media-action" type="button" data-media-target="striker-photo">Upload & Crop</button>
+          </div>
+
+          <div class="media-card">
+            <div class="media-preview portrait" id="nonstriker-photo-preview"><span>SY</span></div>
+            <div class="media-copy">
+              <div class="media-title">Non-Striker Portrait</div>
+              <div class="media-subtitle">Prepared for instant player card changes</div>
+            </div>
+            <button class="btn btn-secondary media-action" type="button" data-media-target="nonstriker-photo">Upload & Crop</button>
+          </div>
+        </div>
+
+        <div class="batsmen-grid">
+          <div class="batsman-box">
+            <h3>Striker</h3>
+            <div class="input-group"><label>Name</label><input type="text" id="striker-name" value="Rohit Sharma"></div>
+            <div class="input-row">
+              <div class="input-group small"><label>Runs</label><input type="number" id="striker-runs" value="58" min="0"></div>
+              <div class="input-group small"><label>Balls</label><input type="number" id="striker-balls" value="32" min="0"></div>
+              <div class="input-group small"><label>4s</label><input type="number" id="striker-fours" value="5" min="0"></div>
+              <div class="input-group small"><label>6s</label><input type="number" id="striker-sixes" value="3" min="0"></div>
+            </div>
+          </div>
+
+          <div class="batsman-box">
+            <h3>Non-Striker</h3>
+            <div class="input-group"><label>Name</label><input type="text" id="nonstriker-name" value="Suryakumar Yadav"></div>
+            <div class="input-row">
+              <div class="input-group small"><label>Runs</label><input type="number" id="nonstriker-runs" value="42" min="0"></div>
+              <div class="input-group small"><label>Balls</label><input type="number" id="nonstriker-balls" value="28" min="0"></div>
+              <div class="input-group small"><label>4s</label><input type="number" id="nonstriker-fours" value="3" min="0"></div>
+              <div class="input-group small"><label>6s</label><input type="number" id="nonstriker-sixes" value="2" min="0"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-row partnership-row">
+          <div class="input-group small"><label>Partnership Runs</label><input type="number" id="partnership-runs" value="87" min="0"></div>
+          <div class="input-group small"><label>Partnership Balls</label><input type="number" id="partnership-balls" value="52" min="0"></div>
+        </div>
+        <button class="btn btn-primary" onclick="updateBatsmen()">Update Batsmen</button>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Bowl</span>Bowler</h2>
+        <div class="bowler-grid">
+          <div class="input-group"><label>Name</label><input type="text" id="bowler-name" value="Deepak Chahar"></div>
+          <div class="input-row">
+            <div class="input-group small"><label>Overs</label><input type="number" id="bowler-overs" value="3.2" step="0.1"></div>
+            <div class="input-group small"><label>Maidens</label><input type="number" id="bowler-maidens" value="0" min="0"></div>
+            <div class="input-group small"><label>Runs</label><input type="number" id="bowler-runs" value="28" min="0"></div>
+            <div class="input-group small"><label>Wickets</label><input type="number" id="bowler-wickets" value="1" min="0"></div>
+            <div class="input-group small"><label>Dots</label><input type="number" id="bowler-dots" value="8" min="0"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="updateBowler()">Update Bowler</button>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Over</span>This Over</h2>
+        <div class="balls-grid" id="balls-grid"></div>
+        <div class="ball-buttons">
+          <button class="btn btn-ball" onclick="addBall('0')">0</button>
+          <button class="btn btn-ball" onclick="addBall('1')">1</button>
+          <button class="btn btn-ball" onclick="addBall('2')">2</button>
+          <button class="btn btn-ball" onclick="addBall('3')">3</button>
+          <button class="btn btn-ball boundary" onclick="addBall('4')">4</button>
+          <button class="btn btn-ball six" onclick="addBall('6')">6</button>
+          <button class="btn btn-ball wicket" onclick="addBall('W')">W</button>
+          <button class="btn btn-ball wide" onclick="addBall('Wd')">Wd</button>
+          <button class="btn btn-ball noball" onclick="addBall('Nb')">Nb</button>
+          <button class="btn btn-danger inline" onclick="clearOver()">Clear</button>
+        </div>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Live</span>Event Triggers</h2>
+        <div class="trigger-grid">
+          <button class="btn btn-trigger wicket-btn" onclick="triggerWicket()"><span class="trigger-icon">OUT</span><span>WICKET!</span></button>
+          <button class="btn btn-trigger six-btn" onclick="triggerSix()"><span class="trigger-icon">6</span><span>SIX!</span></button>
+          <button class="btn btn-trigger four-btn" onclick="triggerFour()"><span class="trigger-icon">4</span><span>FOUR!</span></button>
+          <button class="btn btn-trigger intro-btn" onclick="triggerIntro()"><span class="trigger-icon">VS</span><span>Match Intro</span></button>
+        </div>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Show</span>Graphics Visibility</h2>
+        <div class="toggle-grid">
+          <label class="toggle-item"><input type="checkbox" id="toggle-scorebug" checked onchange="toggleGraphic('scorebug')"><span class="toggle-slider"></span><span class="toggle-label">Score Bug</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-fullscoreboard" onchange="toggleGraphic('fullscoreboard')"><span class="toggle-slider"></span><span class="toggle-label">Full Scoreboard</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-playerstats" onchange="toggleGraphic('playerstats')"><span class="toggle-slider"></span><span class="toggle-label">Player Stats</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-bowlerstats" onchange="toggleGraphic('bowlerstats')"><span class="toggle-slider"></span><span class="toggle-label">Bowler Stats</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-matchsummary" onchange="toggleGraphic('matchsummary')"><span class="toggle-slider"></span><span class="toggle-label">Match Summary</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-teamcomparison" onchange="toggleGraphic('teamcomparison')"><span class="toggle-slider"></span><span class="toggle-label">Team Comparison</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-lowerthird" onchange="toggleGraphic('lowerthird')"><span class="toggle-slider"></span><span class="toggle-label">Lower Third</span></label>
+        </div>
+      </section>
+
+      <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Name</span>Lower Third</h2>
+        <div class="media-grid compact single">
+          <div class="media-card">
+            <div class="media-preview portrait" id="lowerthird-photo-preview"><span>LT</span></div>
+            <div class="media-copy">
+              <div class="media-title">Lower Third Portrait</div>
+              <div class="media-subtitle">Circular headshot on the lower third strap</div>
+            </div>
+            <button class="btn btn-secondary media-action" type="button" data-media-target="lowerthird-photo">Upload & Crop</button>
+          </div>
+        </div>
+        <div class="input-group"><label>Name</label><input type="text" id="lt-name-input" value="Rohit Sharma"></div>
+        <div class="input-group"><label>Information</label><input type="text" id="lt-info-input" value="Captain, Mumbai Indians"></div>
+        <button class="btn btn-primary" onclick="showLowerThird()">Show Lower Third</button>
+      </section>
+
+      <section class="control-section danger-zone">
+        <h2 class="section-title"><span class="section-icon">Warn</span>Danger Zone</h2>
+        <button class="btn btn-danger" onclick="resetMatch()">Reset Match</button>
+      </section>
+    </main>
+  </div>
+
+  <div class="cropper-modal hidden" id="cropper-modal">
+    <div class="cropper-backdrop" id="cropper-backdrop"></div>
+    <div class="cropper-panel">
+      <div class="cropper-header">
+        <div>
+          <h3 id="cropper-title">Crop Image</h3>
+          <p>Drag to position the artwork and use zoom for a perfect circular fit.</p>
+        </div>
+        <button class="cropper-close" type="button" id="cropper-close">Close</button>
+      </div>
+      <div class="cropper-stage">
+        <canvas id="cropper-canvas" width="520" height="520"></canvas>
+      </div>
+      <div class="cropper-toolbar">
+        <label class="cropper-upload">
+          <input type="file" id="cropper-file-input" accept="image/*">
+          <span>Choose Image</span>
+        </label>
+        <div class="cropper-zoom-group">
+          <span>Zoom</span>
+          <input type="range" id="cropper-zoom" min="1" max="3" step="0.01" value="1">
+        </div>
+        <button class="btn btn-secondary" type="button" id="cropper-reset">Reset</button>
+        <button class="btn btn-primary cropper-save" type="button" id="cropper-save">Save Cropped Image</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/control.js"></script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+.batsmen-table {
+  padding: 18px 30px 12px;
+}
+
+.table-header,
+.batsman-row {
+  display: grid;
+  grid-template-columns: 2fr 0.55fr 0.55fr 0.55fr 0.55fr 0.8fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.table-header {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.batsman-row {
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 15px;
+}
+
+.batsman-row .name {
+  font-weight: 600;
+}
+
+.batsman-row .indicator {
+  color: #8cf4ff;
+  margin-right: 4px;
+}
+
+.batsman-row .runs {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.batsman-row .runs.highlight,
+.bowler-figures-large,
+.ss-value {
+  color: var(--gold);
+}
+
+.partnership-bar,
+.bowler-section-full {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 30px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.partnership-label,
+.bowler-header,
+.player-role,
+.bowler-title,
+.summary-header,
+.comp-header,
+.ss-label,
+.comp-stat-label,
+.bowler-stat-label {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.partnership-value,
+.bowler-name-large,
+.comp-team-name {
+  font-weight: 700;
+}
+
+.bowler-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.economy {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+#player-stats {
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 60px;
+}
+
+.player-panel {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+  padding: 40px 46px;
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    linear-gradient(180deg, rgba(6, 14, 29, 0.97), rgba(14, 29, 51, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.46);
+  animation: slideInLeft 0.65s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.player-photo-container {
+  position: relative;
+  width: 192px;
+  height: 192px;
+}
+
+.player-glow {
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(116, 212, 255, 0.34), transparent 64%);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.player-photo {
+  width: 100%;
+  height: 100%;
+}
+
+.player-photo span {
+  font-size: 58px;
+}
+
+.player-team-stripe {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.player-info {
+  min-width: 340px;
+}
+
+.player-name-large {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.player-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.stat-box,
+.bowler-stat,
+.summary-stat {
+  padding: 16px 14px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.stat-value,
+.bowler-stat-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.stat-value.highlight {
+  color: #8cf4ff;
+}
+
+.stat-value.boundary {
+  color: #ffb847;
+}
+
+.stat-value.six {
+  color: #a8b3ff;
+}
+
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: rgba(255, 255, 255, 0.54);
+}
+
+#bowler-stats {
+  align-items: flex-end;
+  padding-bottom: 180px;
+}
+
+.bowler-panel {
+  min-width: 640px;
+  padding: 30px 42px;
+  border-radius: 28px;
+  text-align: center;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(6, 14, 29, 0.97), rgba(14, 29, 51, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.46);
+  animation: scaleIn 0.55s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.bowler-header-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.bowler-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.bowler-name-highlight {
+  font-size: 38px;
+  font-weight: 900;
+}
+
+.bowler-team {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.bowler-stats-row,
+.summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.bowler-stat.highlight {
+  background: linear-gradient(180deg, rgba(255, 82, 112, 0.2), rgba(184, 22, 62, 0.16));
+}
+
+.this-over-detail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.over-balls-detail {
+  display: flex;
+  gap: 8px;
+}
+
+#match-summary,
+#team-comparison {
+  background: rgba(1, 5, 14, 0.5);
+}
+
+.summary-container,
+.comparison-container {
+  min-width: 820px;
+  padding: 42px 60px;
+  border-radius: 34px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(6, 14, 29, 0.97), rgba(14, 29, 51, 0.92));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 40px 110px rgba(0, 0, 0, 0.5);
+  animation: scaleIn 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.summary-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 56px;
+  margin: 30px 0 34px;
+}
+
+.summary-team {
+  text-align: center;
+}
+
+.sum-team-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.sum-team-score {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 60px;
+  font-weight: 700;
+}
+
+.sum-team-overs {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.summary-vs,
+.comp-divider {
+  font-size: 28px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 3px;
+}
+
+.comp-teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 28px 0 34px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comp-team {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.comp-team-badge {
+  width: 82px;
+  height: 82px;
+}
+
+.comp-team-badge span {
+  font-size: 24px;
+}
+
+.comparison-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.comp-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 1fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.comp-stat-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.comp-stat-value.left {
+  text-align: right;
+  color: #8fdcff;
+}
+
+.comp-stat-value.right {
+  text-align: left;
+  color: #ffd66d;
+}
+
+.comp-stat-label {
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+}

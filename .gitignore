@@ -1,0 +1,5 @@
+node_modules/
+uploads/
+.netlify/
+.DS_Store
+Thumbs.db

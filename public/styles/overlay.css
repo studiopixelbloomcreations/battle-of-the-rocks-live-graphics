@@ -1,0 +1,601 @@
+:root {
+  --team-primary: #004ba0;
+  --team-secondary: #f9cd05;
+  --metal-light: rgba(255, 255, 255, 0.9);
+  --metal-soft: rgba(255, 255, 255, 0.3);
+  --glass-dark: rgba(7, 14, 27, 0.86);
+  --glass-mid: rgba(15, 28, 48, 0.82);
+  --glass-edge: rgba(255, 255, 255, 0.18);
+  --gold: #d8ba63;
+  --ink: #07111e;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: transparent;
+  font-family: 'Exo 2', 'Rajdhani', sans-serif;
+  color: #fff;
+}
+
+#graphics-container {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.graphic-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.45s ease, visibility 0.45s ease, transform 0.45s ease;
+}
+
+.graphic-layer.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.circular-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.34), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+    linear-gradient(145deg, var(--team-primary), var(--team-secondary));
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -14px 28px rgba(0, 0, 0, 0.28);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-media::after {
+  content: '';
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+}
+
+.circular-media span {
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.circular-media.has-image span {
+  display: none;
+}
+
+@keyframes slideInBottom {
+  from { transform: translateY(120px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-120px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(120px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.86; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(180%); }
+}
+
+@keyframes numberPop {
+  0% { transform: scale(0.4); opacity: 0; }
+  55% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#scorebug {
+  align-items: flex-end;
+  padding-bottom: 19px;
+}
+
+.scorebug-container {
+  width: calc(100% - 76px);
+  animation: slideInBottom 0.7s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.scorebug-glass {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px 14px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 24%),
+    radial-gradient(circle at 72% 0%, rgba(120, 173, 255, 0.18), transparent 22%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05)),
+    linear-gradient(180deg, rgba(5, 12, 24, 0.84), rgba(9, 18, 32, 0.56));
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -24px 36px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(40px) saturate(170%);
+  overflow: hidden;
+}
+
+.scorebug-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 5.6s linear infinite;
+}
+
+.scorebug-glass::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+}
+
+.scorebug-main-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(430px, 1.3fr) minmax(290px, 0.9fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.team-section,
+.scorebug-center,
+.scorebug-side,
+.bowler-section,
+.this-over,
+.win-predictor-inline {
+  position: relative;
+  z-index: 1;
+}
+
+.team-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.team-flag {
+  width: 62px;
+  height: 62px;
+}
+
+.team-flag span {
+  font-size: 19px;
+}
+
+.team-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.team-nameplate {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-scoreline {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.team-score {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 50px;
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.team-overs {
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 1.6px;
+}
+
+.scorebug-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.match-topline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.match-chip {
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.match-chip.soft {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.run-rate,
+.over-label,
+.bowler-label {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.match-status {
+  margin-left: auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(77, 234, 168, 0.26), rgba(117, 255, 183, 0.12));
+  color: #92ffd0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.3px;
+  border: 1px solid rgba(117, 255, 183, 0.28);
+  box-shadow: 0 0 18px rgba(117, 255, 183, 0.14);
+}
+
+.batsmen-section {
+  display: flex;
+  gap: 10px;
+}
+
+.batsman {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  font-size: 14px;
+}
+
+.batsman-name {
+  min-width: 0;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.batsman.striker .batsman-name::before {
+  content: '▶ ';
+  color: #a0e7ff;
+}
+
+.batsman-stats {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.scorebug-side {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bowler-section,
+.this-over {
+  min-width: 0;
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.bowler-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 4px 0 2px;
+}
+
+.bowler-figures {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+}
+
+.over-balls {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.ball,
+.ball-detail {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.ball.boundary,
+.ball-detail.boundary {
+  background: linear-gradient(135deg, #ffb02e, #ff6b2d);
+}
+
+.ball.six,
+.ball-detail.six {
+  background: linear-gradient(135deg, #63d4ff, #8092ff);
+}
+
+.ball.wicket,
+.ball-detail.wicket {
+  background: linear-gradient(135deg, #ff5f73, #d21d3f);
+}
+
+.ball.extra,
+.ball-detail.extra {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+}
+
+.win-predictor-inline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 4px;
+}
+
+.win-predictor-head {
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.predictor-kicker,
+.predictor-values {
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1.6px;
+}
+
+.predictor-kicker {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+}
+
+.predictor-values {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+}
+
+.predictor-divider {
+  color: rgba(255, 255, 255, 0.34);
+}
+
+.win-predictor-track {
+  flex: 1;
+  display: flex;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)),
+    rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.predictor-fill {
+  height: 100%;
+  transition: width 0.45s ease;
+}
+
+.predictor-fill,
+.predictor-blend-zone {
+  height: 100%;
+  transition: width 0.45s ease, background 0.45s ease;
+}
+
+.predictor-fill-team1 {
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+}
+
+.predictor-fill-team2 {
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.predictor-blend-zone {
+  position: relative;
+  min-width: 0;
+  opacity: 0.92;
+  filter: saturate(108%);
+}
+
+.predictor-blend-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.14));
+  mix-blend-mode: screen;
+}
+
+#full-scoreboard {
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 56px;
+}
+
+.scoreboard-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(110, 150, 255, 0.16), transparent 30%), rgba(2, 7, 18, 0.74);
+  backdrop-filter: blur(10px);
+}
+
+.scoreboard-panel {
+  position: relative;
+  width: 560px;
+  border-radius: 30px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(6, 13, 26, 0.97), rgba(12, 24, 42, 0.93));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.48);
+  animation: slideInRight 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.panel-header {
+  position: relative;
+  padding: 28px 32px 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 35%),
+    linear-gradient(135deg, var(--team-primary), #08111e 55%, var(--team-secondary));
+}
+
+.header-accent {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 65%);
+}
+
+.team-badge-large {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 18px;
+}
+
+.team-badge-large span {
+  font-size: 26px;
+}
+
+.team-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.total-score {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 0.95;
+}
+
+.overs-display {
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.76);
+}
