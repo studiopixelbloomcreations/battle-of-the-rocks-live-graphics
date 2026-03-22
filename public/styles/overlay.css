@@ -85,6 +85,16 @@ body {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
+.circular-media img {
+  position: absolute;
+  inset: 10%;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  z-index: 1;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.24));
+}
+
 .circular-media.has-image span {
   display: none;
 }

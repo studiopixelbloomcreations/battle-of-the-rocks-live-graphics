@@ -198,7 +198,7 @@ class CricketGraphicsEngine {
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const particleCount = 1000;
+    const particleCount = 140;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
 
@@ -211,9 +211,9 @@ class CricketGraphicsEngine {
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particleMaterial = new THREE.PointsMaterial({
       color: 0xc8d4ff,
-      size: 1.2,
+      size: 0.7,
       transparent: true,
-      opacity: 0.45
+      opacity: 0.12
     });
 
     const particleSystem = new THREE.Points(particles, particleMaterial);
@@ -458,6 +458,8 @@ class CricketGraphicsEngine {
     document.getElementById('intro-match-label').textContent = state.introData?.matchLabel || 'MATCH 3';
     document.getElementById('intro-venue').textContent = state.introData?.venueLine || `LIVE FROM ${String(state.venue || '').toUpperCase()}`;
 
+    document.getElementById('intro-team1-logo').classList.remove('team-logo-fallback');
+    document.getElementById('intro-team2-logo').classList.remove('team-logo-fallback');
     this.applyCircularMedia('intro-team1-logo', state.battingTeam.logoUrl, state.battingTeam.shortName);
     this.applyCircularMedia('intro-team2-logo', state.bowlingTeam.logoUrl, state.bowlingTeam.shortName);
   }
@@ -502,8 +504,13 @@ class CricketGraphicsEngine {
     element.innerHTML = '';
 
     if (url) {
-      element.style.backgroundImage = `url("${url}")`;
+      element.style.backgroundImage = '';
       element.classList.add('has-image');
+      const image = document.createElement('img');
+      image.src = url;
+      image.alt = fallback || 'logo';
+      image.loading = 'eager';
+      element.appendChild(image);
       return;
     }
 
