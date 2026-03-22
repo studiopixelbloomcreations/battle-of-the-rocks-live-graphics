@@ -363,6 +363,51 @@ body {
   color: var(--text-soft);
 }
 
+.batting-card-editor {
+  margin-bottom: 18px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.batting-card-editor-head,
+.batting-card-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.4fr) minmax(180px, 1.8fr) 84px 84px 56px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.batting-card-editor-head {
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.batting-card-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.batting-card-row:last-child {
+  border-bottom: 0;
+}
+
+.batting-card-row input[type="text"],
+.batting-card-row input[type="number"] {
+  min-width: 0;
+}
+
+.batting-card-row .row-check {
+  display: flex;
+  justify-content: center;
+}
+
 .balls-grid {
   display: flex;
   gap: 8px;

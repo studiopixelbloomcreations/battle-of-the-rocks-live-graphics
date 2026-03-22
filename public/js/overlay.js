@@ -34,6 +34,7 @@ class CricketGraphicsEngine {
     this.layers = {
       scorebug: document.getElementById('scorebug'),
       fullScoreboard: document.getElementById('full-scoreboard'),
+      battingCard: document.getElementById('batting-card'),
       playerStats: document.getElementById('player-stats'),
       bowlerStats: document.getElementById('bowler-stats'),
       matchSummary: document.getElementById('match-summary'),
@@ -286,6 +287,7 @@ class CricketGraphicsEngine {
     this.updateScorebug(state);
     this.updateWinPredictor(state);
     this.updateFullScoreboard(state);
+    this.updateBattingCard(state);
     this.updatePlayerStats(state);
     this.updateBowlerStats(state);
     this.updateMatchSummary(state);
@@ -453,10 +455,32 @@ class CricketGraphicsEngine {
     document.getElementById('intro-match-type').textContent = `${state.matchType} CRICKET`;
     document.getElementById('intro-team1-name').textContent = state.battingTeam.name.toUpperCase();
     document.getElementById('intro-team2-name').textContent = state.bowlingTeam.name.toUpperCase();
-    document.getElementById('intro-venue').textContent = state.venue.toUpperCase();
+    document.getElementById('intro-match-label').textContent = state.introData?.matchLabel || 'MATCH 3';
+    document.getElementById('intro-venue').textContent = state.introData?.venueLine || `LIVE FROM ${String(state.venue || '').toUpperCase()}`;
 
     this.applyCircularMedia('intro-team1-logo', state.battingTeam.logoUrl, state.battingTeam.shortName);
     this.applyCircularMedia('intro-team2-logo', state.bowlingTeam.logoUrl, state.bowlingTeam.shortName);
+  }
+
+  updateBattingCard(state) {
+    const card = state.battingCard || {};
+    document.getElementById('bc-team-title').textContent = card.title || state.battingTeam.name.toUpperCase();
+    document.getElementById('bc-team-subtitle').textContent = card.subtitle || 'LIVE BATTING CARD';
+    document.getElementById('bc-extras-display').textContent = card.extras ?? 0;
+    document.getElementById('bc-overs-display').textContent = card.overs ?? '0.0';
+    document.getElementById('bc-total-display').textContent = card.total || `${state.battingTeam.runs}-${state.battingTeam.wickets}`;
+    this.applyCircularMedia('bc-team-badge', state.battingTeam.logoUrl, state.battingTeam.shortName);
+
+    const container = document.getElementById('batting-card-rows');
+    const players = Array.isArray(card.players) ? card.players : [];
+    container.innerHTML = players.map((player) => `
+      <div class="batting-card-row-display ${player.highlight ? 'highlight' : ''}">
+        <div class="bc-player-name">${player.name || ''}</div>
+        <div class="bc-player-status">${player.status || ''}</div>
+        <div class="bc-player-runs">${player.runs ?? ''}</div>
+        <div class="bc-player-balls">${player.balls ?? ''}</div>
+      </div>
+    `).join('');
   }
 
   renderBallRow(container, balls, className) {
@@ -502,6 +526,7 @@ class CricketGraphicsEngine {
   updateVisibility(state) {
     this.toggleLayer('scorebug', state.showScorebug);
     this.toggleLayer('fullScoreboard', state.showFullScoreboard);
+    this.toggleLayer('battingCard', state.showBattingCard);
     this.toggleLayer('playerStats', state.showPlayerStats);
     this.toggleLayer('bowlerStats', state.showBowlerStats);
     this.toggleLayer('matchSummary', state.showMatchSummary);

@@ -74,6 +74,7 @@ class ControlPanel {
     this.setupEventListeners();
     this.setupCropper();
     this.setupInstanceSelectors();
+    this.initBattingCardEditor();
     this.renderBalls();
   }
 
@@ -196,6 +197,13 @@ class ControlPanel {
       document.getElementById('lt-name-input').value = state.lowerThirdData?.name || '';
       document.getElementById('lt-info-input').value = state.lowerThirdData?.info || '';
       document.getElementById('wp-label').value = state.winPredictor?.label || 'Win Predictor';
+      document.getElementById('intro-match-label').value = state.introData?.matchLabel || 'MATCH 3';
+      document.getElementById('intro-venue-line').value = state.introData?.venueLine || `LIVE FROM ${state.venue.toUpperCase()}`;
+      document.getElementById('bc-title').value = state.battingCard?.title || state.battingTeam.name.toUpperCase();
+      document.getElementById('bc-subtitle').value = state.battingCard?.subtitle || 'LIVE BATTING CARD';
+      document.getElementById('bc-extras').value = state.battingCard?.extras ?? 0;
+      document.getElementById('bc-overs').value = state.battingCard?.overs ?? '0.0';
+      document.getElementById('bc-total').value = state.battingCard?.total || '0-0';
       this.syncInstanceSelectors(state);
     }
 
@@ -242,11 +250,51 @@ class ControlPanel {
 
     document.getElementById('toggle-scorebug').checked = state.showScorebug;
     document.getElementById('toggle-fullscoreboard').checked = state.showFullScoreboard;
+    document.getElementById('toggle-battingcard').checked = state.showBattingCard;
     document.getElementById('toggle-playerstats').checked = state.showPlayerStats;
     document.getElementById('toggle-bowlerstats').checked = state.showBowlerStats;
     document.getElementById('toggle-matchsummary').checked = state.showMatchSummary;
     document.getElementById('toggle-teamcomparison').checked = state.showTeamComparison;
     document.getElementById('toggle-lowerthird').checked = state.showLowerThird;
+    this.renderBattingCardEditor(state.battingCard?.players || []);
+  }
+
+  initBattingCardEditor() {
+    this.renderBattingCardEditor([]);
+  }
+
+  renderBattingCardEditor(players) {
+    const container = document.getElementById('batting-card-rows');
+    if (!container) {
+      return;
+    }
+
+    const fallbackPlayers = Array.from({ length: 11 }, (_, index) => ({
+      name: '',
+      status: '',
+      runs: '',
+      balls: '',
+      highlight: false
+    }));
+    const rows = (players.length ? players : fallbackPlayers).slice(0, 11);
+
+    container.innerHTML = rows.map((player, index) => `
+      <div class="batting-card-row">
+        <input type="text" id="bc-player-name-${index}" value="${this.escapeAttribute(player.name ?? '')}" placeholder="Player ${index + 1}">
+        <input type="text" id="bc-player-status-${index}" value="${this.escapeAttribute(player.status ?? '')}" placeholder="Dismissal / status">
+        <input type="number" id="bc-player-runs-${index}" value="${player.runs ?? ''}" min="0" placeholder="0">
+        <input type="number" id="bc-player-balls-${index}" value="${player.balls ?? ''}" min="0" placeholder="0">
+        <label class="row-check"><input type="checkbox" id="bc-player-highlight-${index}" ${player.highlight ? 'checked' : ''}></label>
+      </div>
+    `).join('');
+  }
+
+  escapeAttribute(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   renderBalls() {
@@ -573,6 +621,19 @@ function updateMatchSetup() {
   showNotification('Match setup updated');
 }
 
+function updateIntroData() {
+  controlPanel.send({
+    type: 'update_intro_meta',
+    data: {
+      introData: {
+        matchLabel: document.getElementById('intro-match-label').value,
+        venueLine: document.getElementById('intro-venue-line').value
+      }
+    }
+  });
+  showNotification('Intro updated');
+}
+
 function updateScore() {
   const data = {
     battingTeam: {
@@ -711,6 +772,31 @@ function clearOver() {
   controlPanel.currentOver = [];
   controlPanel.renderBalls();
   updateScore();
+}
+
+function updateBattingCard() {
+  const players = Array.from({ length: 11 }, (_, index) => ({
+    name: document.getElementById(`bc-player-name-${index}`).value,
+    status: document.getElementById(`bc-player-status-${index}`).value,
+    runs: document.getElementById(`bc-player-runs-${index}`).value,
+    balls: document.getElementById(`bc-player-balls-${index}`).value,
+    highlight: document.getElementById(`bc-player-highlight-${index}`).checked
+  }));
+
+  controlPanel.send({
+    type: 'update_battingcard',
+    data: {
+      battingCard: {
+        title: document.getElementById('bc-title').value,
+        subtitle: document.getElementById('bc-subtitle').value,
+        extras: document.getElementById('bc-extras').value,
+        overs: document.getElementById('bc-overs').value,
+        total: document.getElementById('bc-total').value,
+        players
+      }
+    }
+  });
+  showNotification('Batting card updated');
 }
 
 function triggerWicket() {

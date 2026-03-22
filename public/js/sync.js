@@ -1,6 +1,19 @@
 (function () {
   const STORAGE_KEY = 'big-match-live-graphic-station-state';
   const CHANNEL_KEY = 'big-match-live-graphic-station-channel';
+  const DEFAULT_BATTING_CARD_PLAYERS = [
+    { name: 'David Warner', status: 'c Rizwan b Afridi', runs: 15, balls: 10, highlight: false },
+    { name: 'Travis Head', status: 'c Babar b Naseem', runs: 22, balls: 18, highlight: false },
+    { name: 'Steve Smith', status: 'c Shadab b Haris', runs: 30, balls: 25, highlight: false },
+    { name: 'Marnus Labuschagne', status: 'c Fakhar b Afridi', runs: 12, balls: 14, highlight: false },
+    { name: 'Glenn Maxwell', status: 'NOT OUT', runs: 45, balls: 35, highlight: true },
+    { name: 'Cameron Green', status: 'c Imam b Shadab', runs: 17, balls: 20, highlight: false },
+    { name: 'Alex Carey', status: 'NOT OUT', runs: 70, balls: 21, highlight: true },
+    { name: 'Pat Cummins', status: '', runs: '', balls: '', highlight: false },
+    { name: 'Mitchell Starc', status: '', runs: '', balls: '', highlight: false },
+    { name: 'Adam Zampa', status: '', runs: '', balls: '', highlight: false },
+    { name: 'Josh Hazlewood', status: '', runs: '', balls: '', highlight: false }
+  ];
 
   const DEFAULT_STATE = {
     matchType: 'T20',
@@ -73,8 +86,21 @@
       info: 'Captain, Mumbai Indians',
       photoUrl: ''
     },
+    introData: {
+      matchLabel: 'MATCH 3',
+      venueLine: 'LIVE FROM WANKHEDE STADIUM, MUMBAI'
+    },
+    battingCard: {
+      title: 'MALIYADEVA COLLEGE',
+      subtitle: 'LIVE BATTING CARD',
+      extras: 14,
+      overs: '23.5',
+      total: '225-5',
+      players: DEFAULT_BATTING_CARD_PLAYERS
+    },
     showScorebug: true,
     showFullScoreboard: false,
+    showBattingCard: false,
     showPlayerStats: false,
     showBowlerStats: false,
     showMatchSummary: false,
@@ -200,6 +226,23 @@
         }
         next.lastEvent = 'media_update';
         break;
+      case 'update_intro_meta':
+        next.introData = {
+          ...next.introData,
+          ...(data.introData || {})
+        };
+        next.lastEvent = 'intro_meta_update';
+        break;
+      case 'update_battingcard':
+        next.battingCard = {
+          ...next.battingCard,
+          ...(data.battingCard || {}),
+          players: Array.isArray(data.battingCard?.players)
+            ? data.battingCard.players
+            : next.battingCard.players
+        };
+        next.lastEvent = 'battingcard_update';
+        break;
       case 'update_bowler':
         if (data.bowler) Object.assign(next.bowler, data.bowler);
         next.lastEvent = 'bowler_update';
@@ -241,6 +284,9 @@
         break;
       case 'toggle_fullscoreboard':
         next.showFullScoreboard = data.visible;
+        break;
+      case 'toggle_battingcard':
+        next.showBattingCard = data.visible;
         break;
       case 'toggle_playerstats':
         next.showPlayerStats = data.visible;
@@ -312,6 +358,7 @@
         next.showPlayerStats = false;
         next.showBowlerStats = false;
         next.showFullScoreboard = false;
+        next.showBattingCard = false;
         next.showMatchSummary = false;
         next.showTeamComparison = false;
         break;

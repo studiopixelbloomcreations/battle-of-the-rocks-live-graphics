@@ -136,6 +136,21 @@
       </section>
 
       <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Intro</span>Intro Data</h2>
+        <div class="control-grid">
+          <div class="input-group">
+            <label>Match Label</label>
+            <input type="text" id="intro-match-label" value="MATCH 3">
+          </div>
+          <div class="input-group">
+            <label>Venue Line</label>
+            <input type="text" id="intro-venue-line" value="LIVE FROM WANKHEDE STADIUM, MUMBAI">
+          </div>
+        </div>
+        <button class="btn btn-primary" type="button" onclick="updateIntroData()">Update Intro</button>
+      </section>
+
+      <section class="control-section">
         <h2 class="section-title"><span class="section-icon">Score</span>Score Control</h2>
         <div class="score-grid">
           <div class="score-box">
@@ -261,6 +276,38 @@
       </section>
 
       <section class="control-section">
+        <h2 class="section-title"><span class="section-icon">Card</span>Batting Card</h2>
+        <div class="predictor-panel">
+          <div class="control-grid">
+            <div class="input-group">
+              <label>Card Title</label>
+              <input type="text" id="bc-title" value="MALIYADEVA COLLEGE">
+            </div>
+            <div class="input-group">
+              <label>Card Subtitle</label>
+              <input type="text" id="bc-subtitle" value="LIVE BATTING CARD">
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="input-group small"><label>Extras</label><input type="number" id="bc-extras" value="14" min="0"></div>
+            <div class="input-group small"><label>Overs</label><input type="text" id="bc-overs" value="23.5"></div>
+            <div class="input-group small"><label>Total</label><input type="text" id="bc-total" value="225-5"></div>
+          </div>
+        </div>
+        <div class="batting-card-editor">
+          <div class="batting-card-editor-head">
+            <span>Player</span>
+            <span>Status</span>
+            <span>Runs</span>
+            <span>Balls</span>
+            <span>HL</span>
+          </div>
+          <div id="batting-card-rows"></div>
+        </div>
+        <button class="btn btn-primary" type="button" onclick="updateBattingCard()">Update Batting Card</button>
+      </section>
+
+      <section class="control-section">
         <h2 class="section-title"><span class="section-icon">Live</span>Event Triggers</h2>
         <div class="trigger-grid">
           <button class="btn btn-trigger wicket-btn" onclick="triggerWicket()"><span class="trigger-icon">OUT</span><span>WICKET!</span></button>
@@ -275,6 +322,7 @@
         <div class="toggle-grid">
           <label class="toggle-item"><input type="checkbox" id="toggle-scorebug" checked onchange="toggleGraphic('scorebug')"><span class="toggle-slider"></span><span class="toggle-label">Score Bug</span></label>
           <label class="toggle-item"><input type="checkbox" id="toggle-fullscoreboard" onchange="toggleGraphic('fullscoreboard')"><span class="toggle-slider"></span><span class="toggle-label">Full Scoreboard</span></label>
+          <label class="toggle-item"><input type="checkbox" id="toggle-battingcard" onchange="toggleGraphic('battingcard')"><span class="toggle-slider"></span><span class="toggle-label">Batting Card</span></label>
           <label class="toggle-item"><input type="checkbox" id="toggle-playerstats" onchange="toggleGraphic('playerstats')"><span class="toggle-slider"></span><span class="toggle-label">Player Stats</span></label>
           <label class="toggle-item"><input type="checkbox" id="toggle-bowlerstats" onchange="toggleGraphic('bowlerstats')"><span class="toggle-slider"></span><span class="toggle-label">Bowler Stats</span></label>
           <label class="toggle-item"><input type="checkbox" id="toggle-matchsummary" onchange="toggleGraphic('matchsummary')"><span class="toggle-slider"></span><span class="toggle-label">Match Summary</span></label>

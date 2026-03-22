@@ -72,6 +72,192 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+#batting-card {
+  align-items: center;
+  justify-content: center;
+}
+
+.batting-card-shell {
+  position: relative;
+  width: 1120px;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)),
+    linear-gradient(180deg, rgba(31, 59, 12, 0.96), rgba(52, 92, 18, 0.92));
+  border: 2px solid rgba(228, 238, 248, 0.84);
+  box-shadow:
+    0 38px 90px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -30px 44px rgba(0, 0, 0, 0.16);
+  animation: scaleIn 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.batting-card-shell::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 20px;
+  border: 2px solid rgba(191, 215, 238, 0.4);
+  pointer-events: none;
+}
+
+.batting-card-corner {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,0.18), transparent 22%),
+    radial-gradient(circle at 100% 0%, rgba(120, 173, 255, 0.18), transparent 24%);
+  pointer-events: none;
+}
+
+.batting-card-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: 102px 1fr 170px;
+  gap: 18px;
+  align-items: center;
+  padding: 20px 26px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04)),
+    linear-gradient(180deg, rgba(37, 69, 12, 0.96), rgba(53, 96, 17, 0.94));
+  border-bottom: 2px solid rgba(213, 226, 237, 0.54);
+}
+
+.batting-card-badge {
+  width: 84px;
+  height: 84px;
+}
+
+.batting-card-title {
+  padding: 8px 20px;
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(21, 31, 10, 0.92), rgba(16, 25, 8, 0.88)),
+    linear-gradient(180deg, rgba(255,255,255,0.12), transparent);
+  border: 2px solid rgba(7, 15, 4, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    0 8px 18px rgba(0,0,0,0.18);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.batting-card-subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+  color: rgba(255,255,255,0.9);
+}
+
+.batting-card-columns,
+.batting-card-table-head,
+.batting-card-row-display {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 100px 100px;
+  gap: 12px;
+  align-items: center;
+}
+
+.batting-card-columns {
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.batting-card-columns span:nth-child(1),
+.batting-card-columns span:nth-child(2) {
+  text-align: center;
+}
+
+.batting-card-table-head {
+  padding: 10px 26px;
+  background:
+    linear-gradient(180deg, rgba(180, 220, 255, 0.18), rgba(120, 160, 205, 0.08)),
+    linear-gradient(180deg, rgba(40, 82, 24, 0.82), rgba(34, 67, 18, 0.82));
+  border-top: 1px solid rgba(255,255,255,0.18);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.batting-card-rows {
+  padding: 0 0 4px;
+}
+
+.batting-card-row-display {
+  min-height: 45px;
+  padding: 0 26px;
+  font-size: 17px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
+    linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+}
+
+.batting-card-row-display.highlight {
+  background:
+    linear-gradient(180deg, rgba(197, 14, 31, 0.96), rgba(171, 8, 25, 0.92)),
+    linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
+}
+
+.bc-player-name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.bc-player-status {
+  color: rgba(255,255,255,0.92);
+}
+
+.bc-player-runs,
+.bc-player-balls {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.batting-card-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 0;
+  align-items: stretch;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.04)),
+    linear-gradient(180deg, rgba(242, 244, 246, 0.96), rgba(222, 228, 234, 0.92));
+  color: #10151c;
+}
+
+.batting-card-meta {
+  padding: 12px 22px;
+  border-right: 1px solid rgba(16, 21, 28, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.batting-card-meta.total {
+  border-right: 0;
+}
+
+.batting-card-meta span {
+  letter-spacing: 1.2px;
+}
+
+.batting-card-meta strong {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 34px;
+  line-height: 1;
+}
+
 .partnership-label,
 .bowler-header,
 .player-role,

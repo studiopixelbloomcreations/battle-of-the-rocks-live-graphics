@@ -16,18 +16,24 @@
       <div class="intro-content">
         <div class="match-type" id="intro-match-type">T20 CRICKET</div>
         <div class="intro-shell">
-          <div class="teams-container">
+          <div class="intro-stage-lights"></div>
+          <div class="teams-container modern-intro">
             <div class="team-box team-left">
-              <div class="team-logo circular-media" id="intro-team1-logo"><span>MI</span></div>
-              <div class="team-name" id="intro-team1-name">MUMBAI INDIANS</div>
+              <div class="team-logo circular-media team-logo-3d" id="intro-team1-logo"><span>MI</span></div>
             </div>
-            <div class="vs-badge">VS</div>
+            <div class="intro-center-stack">
+              <div class="intro-team-name top" id="intro-team1-name">MUMBAI INDIANS</div>
+              <div class="vs-badge">VS</div>
+              <div class="intro-team-name bottom" id="intro-team2-name">CHENNAI SUPER KINGS</div>
+            </div>
             <div class="team-box team-right">
-              <div class="team-logo circular-media" id="intro-team2-logo"><span>CSK</span></div>
-              <div class="team-name" id="intro-team2-name">CHENNAI SUPER KINGS</div>
+              <div class="team-logo circular-media team-logo-3d" id="intro-team2-logo"><span>CSK</span></div>
             </div>
           </div>
-          <div class="venue" id="intro-venue">WANKHEDE STADIUM</div>
+          <div class="intro-meta-stack">
+            <div class="intro-match-label" id="intro-match-label">MATCH 3</div>
+            <div class="venue" id="intro-venue">LIVE FROM WANKHEDE STADIUM, MUMBAI</div>
+          </div>
         </div>
       </div>
     </div>
@@ -119,6 +125,35 @@
         <div class="bowler-section-full">
           <div class="bowler-header">Current Bowler</div>
           <div class="bowler-row" id="fs-bowler"><span class="bowler-name-large">Deepak Chahar</span><span class="bowler-figures-large">3.2-0-28-1</span><span class="economy">Econ: 8.40</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="batting-card" class="graphic-layer hidden">
+      <div class="batting-card-shell">
+        <div class="batting-card-corner"></div>
+        <div class="batting-card-header">
+          <div class="batting-card-badge circular-media" id="bc-team-badge"><span>MI</span></div>
+          <div class="batting-card-header-copy">
+            <div class="batting-card-title" id="bc-team-title">MALIYADEVA COLLEGE</div>
+            <div class="batting-card-subtitle" id="bc-team-subtitle">LIVE BATTING CARD</div>
+          </div>
+          <div class="batting-card-columns">
+            <span>RUNS</span>
+            <span>BALLS</span>
+          </div>
+        </div>
+        <div class="batting-card-table-head">
+          <span>BATTER</span>
+          <span>STATUS</span>
+          <span>RUNS</span>
+          <span>BALLS</span>
+        </div>
+        <div class="batting-card-rows" id="batting-card-rows"></div>
+        <div class="batting-card-footer">
+          <div class="batting-card-meta"><span>EXTRAS</span><strong id="bc-extras-display">14</strong></div>
+          <div class="batting-card-meta"><span>OVERS</span><strong id="bc-overs-display">23.5</strong></div>
+          <div class="batting-card-meta total"><span>TOTAL</span><strong id="bc-total-display">225-5</strong></div>
         </div>
       </div>
     </div>
