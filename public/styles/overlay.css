@@ -3,6 +3,7 @@
   --team-secondary: #f9cd05;
   --metal-light: rgba(255, 255, 255, 0.9);
   --metal-soft: rgba(255, 255, 255, 0.3);
+  --metal-bright: rgba(255, 245, 214, 0.92);
   --glass-dark: rgba(7, 14, 27, 0.86);
   --glass-mid: rgba(15, 28, 48, 0.82);
   --glass-edge: rgba(255, 255, 255, 0.18);
@@ -140,20 +141,21 @@ body {
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  padding: 12px 14px 14px;
-  border-radius: 30px;
+  padding: 13px 16px 16px;
+  border-radius: 34px;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 24%),
-    radial-gradient(circle at 72% 0%, rgba(120, 173, 255, 0.18), transparent 22%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05)),
-    linear-gradient(180deg, rgba(5, 12, 24, 0.84), rgba(9, 18, 32, 0.56));
-  border: 1px solid var(--glass-edge);
+    radial-gradient(circle at 14% 4%, rgba(255, 255, 255, 0.3), transparent 23%),
+    radial-gradient(circle at 74% -2%, rgba(138, 196, 255, 0.2), transparent 22%),
+    radial-gradient(circle at 85% 110%, rgba(255, 213, 122, 0.16), transparent 26%),
+    linear-gradient(138deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04) 36%, rgba(255, 255, 255, 0.1) 60%, rgba(255, 255, 255, 0.03)),
+    linear-gradient(180deg, rgba(7, 16, 29, 0.9), rgba(10, 20, 36, 0.64));
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow:
-    0 28px 60px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    inset 0 -24px 36px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(40px) saturate(170%);
+    0 30px 70px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -34px 60px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(56px) saturate(190%);
   overflow: hidden;
 }
 
@@ -175,6 +177,39 @@ body {
   top: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+}
+
+.scorebug-liquid,
+.scorebug-chrome {
+  position: absolute;
+  pointer-events: none;
+}
+
+.scorebug-liquid {
+  inset: -18% -6% auto;
+  height: 72%;
+  background:
+    radial-gradient(circle at 22% 28%, rgba(255, 255, 255, 0.26), transparent 16%),
+    radial-gradient(circle at 50% 36%, rgba(153, 220, 255, 0.18), transparent 20%),
+    radial-gradient(circle at 78% 22%, rgba(255, 214, 132, 0.12), transparent 18%);
+  filter: blur(16px);
+  opacity: 0.8;
+}
+
+.scorebug-chrome {
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.26), rgba(255, 233, 182, 0.28), transparent);
+  box-shadow: 0 0 18px rgba(255, 240, 196, 0.08);
+}
+
+.scorebug-chrome.chrome-a {
+  left: 27.8%;
+}
+
+.scorebug-chrome.chrome-b {
+  right: 27.8%;
 }
 
 .scorebug-main-row {
@@ -202,11 +237,12 @@ body {
   gap: 14px;
   min-width: 0;
   padding: 10px 12px;
-  border-radius: 22px;
+  border-radius: 24px;
   background:
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.18), transparent 28%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.13);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
@@ -248,6 +284,7 @@ body {
   line-height: 0.86;
   font-weight: 700;
   letter-spacing: 1px;
+  text-shadow: 0 8px 22px rgba(255, 255, 255, 0.08);
 }
 
 .team-overs {
@@ -264,11 +301,12 @@ body {
   justify-content: space-between;
   gap: 8px;
   padding: 10px 12px;
-  border-radius: 22px;
+  border-radius: 24px;
   background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.18), transparent 24%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.13);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
@@ -281,8 +319,10 @@ body {
 .match-chip {
   padding: 6px 11px;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.19), rgba(255, 255, 255, 0.07)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: rgba(255, 255, 255, 0.92);
   text-transform: uppercase;
   letter-spacing: 1.6px;
@@ -314,7 +354,9 @@ body {
   font-weight: 700;
   letter-spacing: 2.3px;
   border: 1px solid rgba(117, 255, 183, 0.28);
-  box-shadow: 0 0 18px rgba(117, 255, 183, 0.14);
+  box-shadow:
+    0 0 18px rgba(117, 255, 183, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .batsmen-section {
@@ -329,12 +371,15 @@ body {
   gap: 14px;
   min-width: 0;
   padding: 10px 12px;
-  border-radius: 16px;
+  border-radius: 18px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.14), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.08);
   font-size: 14px;
 }
 
@@ -372,12 +417,15 @@ body {
   min-width: 0;
   flex: 1;
   padding: 10px 12px;
-  border-radius: 18px;
+  border-radius: 20px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.14), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -14px 22px rgba(0, 0, 0, 0.09);
 }
 
 .bowler-name {
@@ -405,8 +453,10 @@ body {
   height: 28px;
   padding: 0 7px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.26), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -480,14 +530,26 @@ body {
 .win-predictor-track {
   flex: 1;
   display: flex;
-  height: 12px;
+  height: 14px;
   overflow: hidden;
   border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05)),
     rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+.win-predictor-track::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 48%);
+  pointer-events: none;
 }
 
 .predictor-fill {
@@ -550,6 +612,16 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.48);
   animation: slideInRight 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.scoreboard-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.2), transparent 22%),
+    linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent 56%);
+  pointer-events: none;
 }
 
 .panel-header {

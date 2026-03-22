@@ -567,11 +567,14 @@ class CricketGraphicsEngine {
     }
 
     this.restartAnimations([
+      '.wicket-kicker',
       '.stump',
       '.bail-left',
       '.bail-right',
       '.wicket-ball-trail',
       '.wicket-ball-impact',
+      '.wicket-shockring',
+      '.wicket-slash',
       '.wicket-text'
     ]);
   }
@@ -594,8 +597,13 @@ class CricketGraphicsEngine {
     }
 
     this.restartAnimations([
+      '.six-kicker',
+      '.six-grid',
+      '.six-halo',
       '.six-orbit-ring',
+      '.orbit-secondary',
       '.six-ball-flight',
+      '.six-comet-tail',
       '.six-number',
       '.six-text'
     ]);
@@ -604,6 +612,8 @@ class CricketGraphicsEngine {
   triggerFourAnimation() {
     document.getElementById('four-player').textContent = this.currentState.striker.name;
     this.restartAnimations([
+      '.four-kicker',
+      '.four-scan',
       '.four-lane',
       '.four-ball-dash',
       '.four-number',

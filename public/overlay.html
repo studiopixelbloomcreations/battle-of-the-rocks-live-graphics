@@ -35,6 +35,9 @@
     <div id="scorebug" class="graphic-layer">
       <div class="scorebug-container">
         <div class="scorebug-glass">
+          <div class="scorebug-liquid"></div>
+          <div class="scorebug-chrome chrome-a"></div>
+          <div class="scorebug-chrome chrome-b"></div>
           <div class="scorebug-main-row">
             <div class="team-section batting">
               <div class="team-flag circular-media" id="batting-flag"><span>MI</span></div>
@@ -193,6 +196,8 @@
     <div id="lower-third" class="graphic-layer hidden">
       <div class="lt-container">
         <div class="lt-bar">
+          <div class="lt-liquid"></div>
+          <div class="lt-chrome"></div>
           <div class="lt-accent"></div>
           <div class="lt-photo circular-media" id="lt-photo"><span>RS</span></div>
           <div class="lt-content"><div class="lt-name" id="lt-name">Rohit Sharma</div><div class="lt-info" id="lt-info">Captain, Mumbai Indians</div></div>
@@ -202,6 +207,8 @@
 
     <div id="wicket-animation" class="graphic-layer hidden">
       <canvas id="wicket-canvas"></canvas>
+      <div class="wicket-shockring"></div>
+      <div class="wicket-slash"></div>
       <div class="wicket-scene">
         <div class="stump-stack">
           <div class="stump"></div>
@@ -213,29 +220,36 @@
           <div class="wicket-ball-impact"></div>
         </div>
       </div>
-      <div class="wicket-content"><div class="wicket-text">WICKET!</div><div class="wicket-player" id="wicket-player">Rohit Sharma</div><div class="wicket-dismissal" id="wicket-dismissal">caught by fielder</div><div class="wicket-figures" id="wicket-figures">58 runs (32 balls)</div></div>
+      <div class="wicket-content"><div class="wicket-kicker">BREAKTHROUGH</div><div class="wicket-text">WICKET!</div><div class="wicket-player" id="wicket-player">Rohit Sharma</div><div class="wicket-dismissal" id="wicket-dismissal">caught by fielder</div><div class="wicket-figures" id="wicket-figures">58 runs (32 balls)</div></div>
       <div class="wicket-burst"></div>
     </div>
 
     <div id="six-animation" class="graphic-layer hidden">
       <canvas id="six-canvas"></canvas>
+      <div class="six-grid"></div>
       <div class="six-flight-scene">
+        <div class="six-halo"></div>
         <div class="six-orbit-ring"></div>
+        <div class="six-orbit-ring orbit-secondary"></div>
         <div class="six-ball-flight"></div>
+        <div class="six-comet-tail"></div>
       </div>
-      <div class="six-content"><div class="six-number">6</div><div class="six-text">SIX!</div><div class="six-player" id="six-player">Rohit Sharma</div></div>
+      <div class="six-content"><div class="six-kicker">MAXIMUM</div><div class="six-number">6</div><div class="six-text">SIX!</div><div class="six-player" id="six-player">Rohit Sharma</div></div>
       <div class="six-particles" id="six-particles"></div>
     </div>
 
     <div id="four-animation" class="graphic-layer hidden">
       <canvas id="four-canvas"></canvas>
+      <div class="four-scan"></div>
       <div class="four-streak-scene">
         <div class="four-lane lane-a"></div>
         <div class="four-lane lane-b"></div>
         <div class="four-lane lane-c"></div>
+        <div class="four-lane lane-d"></div>
         <div class="four-ball-dash"></div>
+        <div class="four-ball-dash dash-secondary"></div>
       </div>
-      <div class="four-content"><div class="four-number">4</div><div class="four-text">FOUR!</div><div class="four-player" id="four-player">Rohit Sharma</div></div>
+      <div class="four-content"><div class="four-kicker">THREADS THE GAP</div><div class="four-number">4</div><div class="four-text">FOUR!</div><div class="four-player" id="four-player">Rohit Sharma</div></div>
     </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
