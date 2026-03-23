@@ -1,3 +1,506 @@
+class SceneManager {
+  constructor(canvas, palette) {
+    this.palette = palette;
+    this.canvas = canvas;
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.FogExp2(0x050814, 0.018);
+    this.camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.clock = new THREE.Clock();
+    this.root = new THREE.Group();
+    this.scene.add(this.root);
+    this.setupLights();
+    this.setupEnvironment();
+  }
+
+  setupLights() {
+    this.hemiLight = new THREE.HemisphereLight(0x4fd5ff, 0x04070d, 1.1);
+    this.scene.add(this.hemiLight);
+
+    this.keyLight = new THREE.DirectionalLight(0xcde4ff, 1.4);
+    this.keyLight.position.set(6, 10, 8);
+    this.scene.add(this.keyLight);
+
+    this.rimLight = new THREE.PointLight(this.palette.accent, 1.8, 40, 2);
+    this.rimLight.position.set(-4, 6, 10);
+    this.scene.add(this.rimLight);
+
+    this.flashLight = new THREE.PointLight(0xffffff, 0, 45, 2);
+    this.flashLight.position.set(0, 4, 8);
+    this.scene.add(this.flashLight);
+  }
+
+  setupEnvironment() {
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(18, 48),
+      new THREE.MeshStandardMaterial({
+        color: 0x08111d,
+        emissive: 0x09162b,
+        emissiveIntensity: 0.18,
+        roughness: 0.56,
+        metalness: 0.22,
+        transparent: true,
+        opacity: 0.94
+      })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -2.6;
+    this.scene.add(floor);
+  }
+
+  resize() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  render() {
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+class CameraController {
+  constructor(camera) {
+    this.camera = camera;
+    this.position = new THREE.Vector3(0, 1.5, 11);
+    this.targetPosition = this.position.clone();
+    this.lookAt = new THREE.Vector3(0, 0, 0);
+    this.targetLookAt = this.lookAt.clone();
+    this.shake = 0;
+    this.camera.position.copy(this.position);
+    this.camera.lookAt(this.lookAt);
+  }
+
+  moveTo(position, lookAt) {
+    this.targetPosition.copy(position);
+    this.targetLookAt.copy(lookAt);
+  }
+
+  addShake(amount) {
+    this.shake = Math.max(this.shake, amount);
+  }
+
+  update(delta) {
+    this.position.lerp(this.targetPosition, Math.min(1, delta * 4.8));
+    this.lookAt.lerp(this.targetLookAt, Math.min(1, delta * 5.2));
+    this.camera.position.copy(this.position);
+
+    if (this.shake > 0.001) {
+      this.camera.position.x += (Math.random() - 0.5) * this.shake;
+      this.camera.position.y += (Math.random() - 0.5) * this.shake;
+      this.shake *= Math.max(0, 1 - delta * 7);
+    }
+
+    this.camera.lookAt(this.lookAt);
+  }
+}
+
+class ParticleSystem {
+  constructor(scene) {
+    this.scene = scene;
+    this.bursts = [];
+    this.shockwaves = [];
+    this.trails = [];
+  }
+
+  spawnBurst(origin, options = {}) {
+    const count = options.count || 160;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    const velocities = [];
+    const color = new THREE.Color(options.color || 0x8ad8ff);
+
+    for (let i = 0; i < count; i += 1) {
+      positions[i * 3] = origin.x;
+      positions[i * 3 + 1] = origin.y;
+      positions[i * 3 + 2] = origin.z;
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+      velocities.push(new THREE.Vector3(
+        (Math.random() - 0.5) * (options.spread || 8),
+        (Math.random() - 0.2) * (options.lift || 8),
+        (Math.random() - 0.5) * (options.depth || 5)
+      ));
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const material = new THREE.PointsMaterial({
+      size: options.size || 0.16,
+      vertexColors: true,
+      transparent: true,
+      opacity: options.opacity || 1,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const points = new THREE.Points(geometry, material);
+    this.scene.add(points);
+    this.bursts.push({ points, velocities, life: options.life || 1.2, gravity: options.gravity || 6 });
+  }
+
+  spawnShockwave(origin, color) {
+    const mesh = new THREE.Mesh(
+      new THREE.RingGeometry(0.6, 0.8, 64),
+      new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.copy(origin);
+    this.scene.add(mesh);
+    this.shockwaves.push({ mesh, life: 0.8, scale: 1 });
+  }
+
+  spawnTrail(position, color, scale = 1) {
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.18 * scale, 16, 16),
+      new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      })
+    );
+    mesh.position.copy(position);
+    this.scene.add(mesh);
+    this.trails.push({ mesh, life: 0.4 });
+  }
+
+  update(delta) {
+    this.bursts = this.bursts.filter((burst) => {
+      burst.life -= delta;
+      const positions = burst.points.geometry.attributes.position.array;
+      burst.velocities.forEach((velocity, index) => {
+        positions[index * 3] += velocity.x * delta;
+        positions[index * 3 + 1] += velocity.y * delta;
+        positions[index * 3 + 2] += velocity.z * delta;
+        velocity.y -= burst.gravity * delta;
+      });
+      burst.points.geometry.attributes.position.needsUpdate = true;
+      burst.points.material.opacity = Math.max(0, burst.life);
+      if (burst.life <= 0) {
+        this.scene.remove(burst.points);
+        burst.points.geometry.dispose();
+        burst.points.material.dispose();
+        return false;
+      }
+      return true;
+    });
+
+    this.shockwaves = this.shockwaves.filter((wave) => {
+      wave.life -= delta;
+      wave.scale += delta * 8;
+      wave.mesh.scale.setScalar(wave.scale);
+      wave.mesh.material.opacity = Math.max(0, wave.life);
+      if (wave.life <= 0) {
+        this.scene.remove(wave.mesh);
+        wave.mesh.geometry.dispose();
+        wave.mesh.material.dispose();
+        return false;
+      }
+      return true;
+    });
+
+    this.trails = this.trails.filter((trail) => {
+      trail.life -= delta;
+      trail.mesh.scale.multiplyScalar(1 + delta * 2.6);
+      trail.mesh.material.opacity = Math.max(0, trail.life * 1.6);
+      if (trail.life <= 0) {
+        this.scene.remove(trail.mesh);
+        trail.mesh.geometry.dispose();
+        trail.mesh.material.dispose();
+        return false;
+      }
+      return true;
+    });
+  }
+}
+
+class EventAnimationController {
+  constructor(sceneManager, palette) {
+    this.sceneManager = sceneManager;
+    this.palette = palette;
+    this.cameraController = new CameraController(sceneManager.camera);
+    this.particles = new ParticleSystem(sceneManager.scene);
+    this.time = 0;
+    this.active = false;
+    this.flashTimer = 0;
+  }
+
+  trigger(context = {}) {
+    this.context = context;
+    this.time = 0;
+    this.active = true;
+  }
+
+  update(delta) {
+    this.particles.update(delta);
+    this.cameraController.update(delta);
+    if (this.flashTimer > 0) {
+      this.flashTimer = Math.max(0, this.flashTimer - delta * 4);
+      this.sceneManager.flashLight.intensity = this.flashTimer * 6;
+    } else {
+      this.sceneManager.flashLight.intensity = 0;
+    }
+  }
+
+  flash() {
+    this.flashTimer = 1;
+  }
+}
+
+class WicketAnimationController extends EventAnimationController {
+  constructor(sceneManager, palette) {
+    super(sceneManager, palette);
+    this.fragmentVelocities = [];
+    this.impactTriggered = false;
+    this.setup();
+  }
+
+  setup() {
+    const root = this.sceneManager.root;
+    this.ball = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 24, 24),
+      new THREE.MeshStandardMaterial({ color: 0xff315d, emissive: 0x8f1026, emissiveIntensity: 1, metalness: 0.25, roughness: 0.36 })
+    );
+    root.add(this.ball);
+
+    this.stumps = [];
+    for (let i = 0; i < 3; i += 1) {
+      const stump = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.12, 2.2, 12),
+        new THREE.MeshStandardMaterial({ color: 0xe4b255, emissive: 0x5a3911, emissiveIntensity: 0.26, metalness: 0.3, roughness: 0.42 })
+      );
+      stump.position.set(-0.46 + i * 0.46, -1.4, 0);
+      root.add(stump);
+      this.stumps.push(stump);
+    }
+
+    this.fragments = [];
+    for (let i = 0; i < 18; i += 1) {
+      const fragment = new THREE.Mesh(
+        new THREE.BoxGeometry(0.14, 0.34, 0.14),
+        new THREE.MeshStandardMaterial({ color: 0xe0b35f, emissive: 0x4c2f0d, emissiveIntensity: 0.18, metalness: 0.32, roughness: 0.44 })
+      );
+      fragment.visible = false;
+      root.add(fragment);
+      this.fragments.push(fragment);
+      this.fragmentVelocities.push(new THREE.Vector3());
+    }
+  }
+
+  trigger(context = {}) {
+    super.trigger(context);
+    this.impactTriggered = false;
+    this.ball.position.set(-4.5, -0.7, 3.2);
+    this.sceneManager.rimLight.color.setHex(this.palette.wicket);
+    this.cameraController.moveTo(new THREE.Vector3(0, 0.8, 9.5), new THREE.Vector3(0, -0.5, 0));
+    this.stumps.forEach((stump, index) => {
+      stump.visible = true;
+      stump.position.set(-0.46 + index * 0.46, -1.4, 0);
+      stump.rotation.set(0, 0, 0);
+    });
+    this.fragments.forEach((fragment) => {
+      fragment.visible = false;
+      fragment.position.set(0, -1, 0);
+      fragment.rotation.set(0, 0, 0);
+    });
+  }
+
+  update(delta) {
+    super.update(delta);
+    if (!this.active) return;
+    this.time += delta;
+
+    const hitProgress = Math.min(1, this.time / 0.7);
+    this.ball.position.set(
+      THREE.MathUtils.lerp(-4.5, 0.12, hitProgress),
+      THREE.MathUtils.lerp(-0.7, -0.62, hitProgress),
+      THREE.MathUtils.lerp(3.2, 0.18, hitProgress)
+    );
+
+    if (this.time > 0.48 && !this.impactTriggered) {
+      this.impactTriggered = true;
+      this.flash();
+      this.cameraController.addShake(0.26);
+      this.cameraController.moveTo(new THREE.Vector3(0.8, 1.2, 7.4), new THREE.Vector3(0, -0.6, 0));
+      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: this.palette.wicket, count: 240, spread: 11, lift: 10, life: 1.4, size: 0.18 });
+      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: 0xffffff, count: 90, spread: 6, lift: 6, life: 0.75, size: 0.12 });
+      this.particles.spawnShockwave(new THREE.Vector3(0, -2.48, 0), this.palette.wicket);
+      this.stumps.forEach((stump) => { stump.visible = false; });
+      this.fragments.forEach((fragment, index) => {
+        fragment.visible = true;
+        fragment.position.set((Math.random() - 0.5) * 0.6, -0.8 + Math.random() * 1.8, (Math.random() - 0.5) * 0.6);
+        this.fragmentVelocities[index].set((Math.random() - 0.5) * 7, Math.random() * 8, (Math.random() - 0.5) * 4);
+      });
+    }
+
+    if (this.impactTriggered) {
+      this.fragments.forEach((fragment, index) => {
+        const velocity = this.fragmentVelocities[index];
+        fragment.position.addScaledVector(velocity, delta);
+        fragment.rotation.x += delta * 9;
+        fragment.rotation.y += delta * 7;
+        velocity.y -= delta * 10;
+      });
+    }
+
+    if (this.time > 1.8) {
+      this.active = false;
+    }
+  }
+}
+
+class SixAnimationController extends EventAnimationController {
+  constructor(sceneManager, palette) {
+    super(sceneManager, palette);
+    this.impactTriggered = false;
+    this.setup();
+  }
+
+  setup() {
+    const root = this.sceneManager.root;
+    this.batPivot = new THREE.Group();
+    this.batPivot.position.set(-0.7, -0.8, 0);
+    root.add(this.batPivot);
+
+    this.bat = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 2.5, 0.42),
+      new THREE.MeshStandardMaterial({ color: 0xc39854, emissive: 0x5c3a11, emissiveIntensity: 0.2, metalness: 0.18, roughness: 0.5 })
+    );
+    this.bat.position.set(0.2, 0.7, 0);
+    this.bat.rotation.z = 0.35;
+    this.batPivot.add(this.bat);
+
+    this.ball = new THREE.Mesh(
+      new THREE.SphereGeometry(0.25, 24, 24),
+      new THREE.MeshStandardMaterial({ color: 0x7fd0ff, emissive: 0x2751d4, emissiveIntensity: 1.4, metalness: 0.18, roughness: 0.22 })
+    );
+    root.add(this.ball);
+  }
+
+  trigger(context = {}) {
+    super.trigger(context);
+    this.impactTriggered = false;
+    this.ball.position.set(-2.8, -0.7, 2.1);
+    this.batPivot.rotation.set(0, 0, -0.6);
+    this.sceneManager.rimLight.color.setHex(this.palette.six);
+    this.cameraController.moveTo(new THREE.Vector3(-1.5, 1.2, 8.5), new THREE.Vector3(0, -0.2, 0));
+  }
+
+  update(delta) {
+    super.update(delta);
+    if (!this.active) return;
+    this.time += delta;
+
+    const swing = Math.min(1, this.time / 0.55);
+    this.batPivot.rotation.z = THREE.MathUtils.lerp(-0.6, 1.05, swing);
+    this.ball.position.set(
+      this.time < 0.46 ? THREE.MathUtils.lerp(-2.8, -0.15, this.time / 0.46) : THREE.MathUtils.lerp(-0.15, 6.2, Math.min(1, (this.time - 0.46) / 1.2)),
+      this.time < 0.46 ? -0.7 : THREE.MathUtils.lerp(-0.7, 5.8, Math.min(1, (this.time - 0.46) / 1.2)),
+      this.time < 0.46 ? THREE.MathUtils.lerp(2.1, 0.2, this.time / 0.46) : THREE.MathUtils.lerp(0.2, -7.2, Math.min(1, (this.time - 0.46) / 1.2))
+    );
+
+    if (this.time > 0.44 && !this.impactTriggered) {
+      this.impactTriggered = true;
+      this.flash();
+      this.cameraController.addShake(0.12);
+      this.particles.spawnBurst(new THREE.Vector3(-0.05, -0.7, 0.1), { color: this.palette.six, count: 220, spread: 8, lift: 8, life: 1.1, size: 0.16 });
+      this.particles.spawnShockwave(new THREE.Vector3(-0.05, -2.46, 0), this.palette.six);
+    }
+
+    if (this.impactTriggered) {
+      this.particles.spawnTrail(this.ball.position.clone(), this.palette.six, 1.05);
+      this.cameraController.moveTo(
+        new THREE.Vector3(this.ball.position.x * 0.36, 1.2 + this.ball.position.y * 0.2, 8.2 + Math.max(0, -this.ball.position.z) * 0.18),
+        this.ball.position.clone()
+      );
+    }
+
+    if (this.time > 1.8) {
+      this.active = false;
+    }
+  }
+}
+
+class FourAnimationController extends EventAnimationController {
+  constructor(sceneManager, palette) {
+    super(sceneManager, palette);
+    this.setup();
+  }
+
+  setup() {
+    const root = this.sceneManager.root;
+    this.ball = new THREE.Mesh(
+      new THREE.SphereGeometry(0.24, 24, 24),
+      new THREE.MeshStandardMaterial({ color: 0xffc768, emissive: 0xb8620d, emissiveIntensity: 0.95, metalness: 0.12, roughness: 0.28 })
+    );
+    root.add(this.ball);
+  }
+
+  trigger(context = {}) {
+    super.trigger(context);
+    this.ball.position.set(-7.4, -2.15, 0.2);
+    this.sceneManager.rimLight.color.setHex(this.palette.four);
+    this.cameraController.moveTo(new THREE.Vector3(-4.2, -0.9, 4.2), new THREE.Vector3(-1.2, -2.15, 0));
+  }
+
+  update(delta) {
+    super.update(delta);
+    if (!this.active) return;
+    this.time += delta;
+
+    const travel = Math.min(1, this.time / 1.3);
+    this.ball.position.x = THREE.MathUtils.lerp(-7.4, 8, travel);
+    this.ball.position.y = -2.15 + Math.sin(travel * Math.PI * 8) * 0.05;
+    this.ball.rotation.z -= delta * 16;
+    this.ball.rotation.x += delta * 7;
+    this.particles.spawnTrail(this.ball.position.clone(), this.palette.four, 0.85);
+
+    if (this.time < 0.26) {
+      this.flash();
+      this.particles.spawnBurst(this.ball.position.clone(), { color: this.palette.four, count: 26, spread: 2.5, lift: 1.5, life: 0.35, size: 0.08, gravity: 1.4 });
+    }
+
+    this.cameraController.moveTo(
+      new THREE.Vector3(this.ball.position.x - 2.6, -1.0, 4.2),
+      new THREE.Vector3(this.ball.position.x + 1.8, -2.05, 0)
+    );
+
+    if (this.time > 1.35) {
+      this.active = false;
+    }
+  }
+}
+
+class AnimationManager {
+  constructor() {
+    this.controllers = {};
+  }
+
+  register(name, controller) {
+    this.controllers[name] = controller;
+  }
+
+  triggerAnimation(name, context) {
+    this.controllers[name]?.trigger(context);
+  }
+
+  update(delta) {
+    Object.values(this.controllers).forEach((controller) => controller.update(delta));
+  }
+}
+
 class CricketGraphicsEngine {
   constructor() {
     this.ws = null;
@@ -61,6 +564,7 @@ class CricketGraphicsEngine {
   }
 
   setupThreeJS() {
+    this.animationManager = new AnimationManager();
     this.setupWicketScene();
     this.setupSixScene();
     this.setupFourScene();
@@ -70,123 +574,55 @@ class CricketGraphicsEngine {
   setupWicketScene() {
     const canvas = document.getElementById('wicket-canvas');
     if (!canvas) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const particleCount = 200;
-    const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const velocities = [];
-
-    for (let i = 0; i < particleCount; i += 1) {
-      velocities.push({
-        x: (Math.random() - 0.5) * 20,
-        y: Math.random() * 20,
-        z: (Math.random() - 0.5) * 20
-      });
-    }
-
-    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particleMaterial = new THREE.PointsMaterial({
-      color: 0xef4444,
-      size: 3,
-      transparent: true,
-      opacity: 0.8
+    const sceneManager = new SceneManager(canvas, {
+      accent: 0xff476f,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
     });
-
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
-
-    const light = new THREE.PointLight(0xef4444, 2, 100);
-    light.position.set(0, 0, 10);
-    scene.add(light);
-
-    camera.position.z = 50;
-    this.threeScenes.wicket = { scene, camera, renderer, particleSystem, velocities, particles };
+    this.threeScenes.wicket = sceneManager;
+    this.animationManager.register('WICKET', new WicketAnimationController(sceneManager, {
+      accent: 0xff476f,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
+    }));
   }
 
   setupSixScene() {
     const canvas = document.getElementById('six-canvas');
     if (!canvas) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const particleCount = 500;
-    const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-    const velocities = [];
-
-    for (let i = 0; i < particleCount; i += 1) {
-      const angle = Math.random() * Math.PI * 2;
-      const radius = Math.random() * 30;
-      positions[i * 3] = Math.cos(angle) * radius;
-      positions[i * 3 + 1] = Math.sin(angle) * radius;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-      colors[i * 3] = 0.8 + Math.random() * 0.15;
-      colors[i * 3 + 1] = 0.75 + Math.random() * 0.1;
-      colors[i * 3 + 2] = 1;
-      velocities.push({
-        x: Math.cos(angle) * (2 + Math.random() * 3),
-        y: Math.sin(angle) * (2 + Math.random() * 3),
-        z: (Math.random() - 0.5) * 2
-      });
-    }
-
-    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const particleMaterial = new THREE.PointsMaterial({
-      size: 4,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending
+    const sceneManager = new SceneManager(canvas, {
+      accent: 0x7fd0ff,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
     });
-
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
-    camera.position.z = 100;
-    this.threeScenes.six = { scene, camera, renderer, particleSystem, velocities, particles };
+    this.threeScenes.six = sceneManager;
+    this.animationManager.register('SIX', new SixAnimationController(sceneManager, {
+      accent: 0x7fd0ff,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
+    }));
   }
 
   setupFourScene() {
     const canvas = document.getElementById('four-canvas');
     if (!canvas) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const particleCount = 300;
-    const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount; i += 1) {
-      positions[i * 3] = (Math.random() - 0.5) * 100;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-    }
-
-    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const particleMaterial = new THREE.PointsMaterial({
-      color: 0xffb22e,
-      size: 2,
-      transparent: true,
-      opacity: 0.75,
-      blending: THREE.AdditiveBlending
+    const sceneManager = new SceneManager(canvas, {
+      accent: 0xffc768,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
     });
-
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
-    camera.position.z = 80;
-    this.threeScenes.four = { scene, camera, renderer, particleSystem, particles };
+    this.threeScenes.four = sceneManager;
+    this.animationManager.register('FOUR', new FourAnimationController(sceneManager, {
+      accent: 0xffc768,
+      wicket: 0xff315d,
+      six: 0x7fd0ff,
+      four: 0xffc768
+    }));
   }
 
   setupIntroScene() {
@@ -231,42 +667,21 @@ class CricketGraphicsEngine {
   }
 
   updateThreeJSScenes() {
+    if (this.animationManager) {
+      const delta = 1 / 60;
+      this.animationManager.update(delta);
+    }
+
     if (this.threeScenes.wicket && !this.layers.wicketAnimation.classList.contains('hidden')) {
-      const { scene, camera, renderer, particleSystem, velocities, particles } = this.threeScenes.wicket;
-      const positions = particles.attributes.position.array;
-      for (let i = 0; i < 200; i += 1) {
-        positions[i * 3] += velocities[i].x * 0.1;
-        positions[i * 3 + 1] += velocities[i].y * 0.1;
-        positions[i * 3 + 2] += velocities[i].z * 0.1;
-        velocities[i].y -= 0.1;
-      }
-      particles.attributes.position.needsUpdate = true;
-      particleSystem.rotation.y += 0.01;
-      renderer.render(scene, camera);
+      this.threeScenes.wicket.render();
     }
 
     if (this.threeScenes.six && !this.layers.sixAnimation.classList.contains('hidden')) {
-      const { scene, camera, renderer, particleSystem, velocities, particles } = this.threeScenes.six;
-      const positions = particles.attributes.position.array;
-      for (let i = 0; i < 500; i += 1) {
-        positions[i * 3] += velocities[i].x;
-        positions[i * 3 + 1] += velocities[i].y;
-        positions[i * 3 + 2] += velocities[i].z;
-      }
-      particles.attributes.position.needsUpdate = true;
-      particleSystem.rotation.z += 0.005;
-      renderer.render(scene, camera);
+      this.threeScenes.six.render();
     }
 
     if (this.threeScenes.four && !this.layers.fourAnimation.classList.contains('hidden')) {
-      const { scene, camera, renderer, particles } = this.threeScenes.four;
-      const positions = particles.attributes.position.array;
-      for (let i = 0; i < 300; i += 1) {
-        positions[i * 3] += 0.5;
-        if (positions[i * 3] > 50) positions[i * 3] = -50;
-      }
-      particles.attributes.position.needsUpdate = true;
-      renderer.render(scene, camera);
+      this.threeScenes.four.render();
     }
 
     if (this.threeScenes.intro && !this.layers.intro.classList.contains('hidden')) {
@@ -587,19 +1002,10 @@ class CricketGraphicsEngine {
       document.getElementById('wicket-dismissal').textContent = `${this.currentState.lastWicket.dismissal} b ${this.currentState.lastWicket.bowler}`;
       document.getElementById('wicket-figures').textContent = `${this.currentState.lastWicket.runs} runs (${this.currentState.lastWicket.balls} balls)`;
     }
-
-    if (this.threeScenes.wicket) {
-      const { particles, velocities } = this.threeScenes.wicket;
-      const positions = particles.attributes.position.array;
-      for (let i = 0; i < 200; i += 1) {
-        positions[i * 3] = 0;
-        positions[i * 3 + 1] = 0;
-        positions[i * 3 + 2] = 0;
-        velocities[i].x = (Math.random() - 0.5) * 20;
-        velocities[i].y = Math.random() * 20;
-        velocities[i].z = (Math.random() - 0.5) * 20;
-      }
-    }
+    this.animationManager?.triggerAnimation('WICKET', {
+      player: this.currentState.lastWicket?.player,
+      bowler: this.currentState.lastWicket?.bowler
+    });
 
     this.restartAnimations([
       '.wicket-kicker',
@@ -616,20 +1022,9 @@ class CricketGraphicsEngine {
 
   triggerSixAnimation() {
     document.getElementById('six-player').textContent = this.currentState.striker.name;
-    if (this.threeScenes.six) {
-      const { particles, velocities } = this.threeScenes.six;
-      const positions = particles.attributes.position.array;
-      for (let i = 0; i < 500; i += 1) {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 30;
-        positions[i * 3] = Math.cos(angle) * radius;
-        positions[i * 3 + 1] = Math.sin(angle) * radius;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-        velocities[i].x = Math.cos(angle) * (2 + Math.random() * 3);
-        velocities[i].y = Math.sin(angle) * (2 + Math.random() * 3);
-        velocities[i].z = (Math.random() - 0.5) * 2;
-      }
-    }
+    this.animationManager?.triggerAnimation('SIX', {
+      player: this.currentState.striker.name
+    });
 
     this.restartAnimations([
       '.six-kicker',
@@ -646,6 +1041,9 @@ class CricketGraphicsEngine {
 
   triggerFourAnimation() {
     document.getElementById('four-player').textContent = this.currentState.striker.name;
+    this.animationManager?.triggerAnimation('FOUR', {
+      player: this.currentState.striker.name
+    });
     this.restartAnimations([
       '.four-kicker',
       '.four-scan',
