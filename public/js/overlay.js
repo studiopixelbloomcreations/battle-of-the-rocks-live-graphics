@@ -518,7 +518,6 @@ class CricketGraphicsEngine {
   }
 
   init() {
-    document.body.classList.add('modern-event-mode');
     this.connectWebSocket();
     this.setupGraphics();
     this.setupResizeHandler();
@@ -572,7 +571,6 @@ class CricketGraphicsEngine {
   }
 
   setupThreeJS() {
-    this.animationManager = new AnimationManager();
     this.setupWicketScene();
     this.setupSixScene();
     this.setupFourScene();
@@ -582,55 +580,123 @@ class CricketGraphicsEngine {
   setupWicketScene() {
     const canvas = document.getElementById('wicket-canvas');
     if (!canvas) return;
-    const sceneManager = new SceneManager(canvas, {
-      accent: 0xff476f,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const particleCount = 200;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = [];
+
+    for (let i = 0; i < particleCount; i += 1) {
+      velocities.push({
+        x: (Math.random() - 0.5) * 20,
+        y: Math.random() * 20,
+        z: (Math.random() - 0.5) * 20
+      });
+    }
+
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+      color: 0xef4444,
+      size: 3,
+      transparent: true,
+      opacity: 0.8
     });
-    this.threeScenes.wicket = sceneManager;
-    this.animationManager.register('WICKET', new WicketAnimationController(sceneManager, {
-      accent: 0xff476f,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
-    }));
+
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+
+    const light = new THREE.PointLight(0xef4444, 2, 100);
+    light.position.set(0, 0, 10);
+    scene.add(light);
+
+    camera.position.z = 50;
+    this.threeScenes.wicket = { scene, camera, renderer, particleSystem, velocities, particles };
   }
 
   setupSixScene() {
     const canvas = document.getElementById('six-canvas');
     if (!canvas) return;
-    const sceneManager = new SceneManager(canvas, {
-      accent: 0x7fd0ff,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const particleCount = 500;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const velocities = [];
+
+    for (let i = 0; i < particleCount; i += 1) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 30;
+      positions[i * 3] = Math.cos(angle) * radius;
+      positions[i * 3 + 1] = Math.sin(angle) * radius;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      colors[i * 3] = 0.8 + Math.random() * 0.15;
+      colors[i * 3 + 1] = 0.75 + Math.random() * 0.1;
+      colors[i * 3 + 2] = 1;
+      velocities.push({
+        x: Math.cos(angle) * (2 + Math.random() * 3),
+        y: Math.sin(angle) * (2 + Math.random() * 3),
+        z: (Math.random() - 0.5) * 2
+      });
+    }
+
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+      size: 4,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.9,
+      blending: THREE.AdditiveBlending
     });
-    this.threeScenes.six = sceneManager;
-    this.animationManager.register('SIX', new SixAnimationController(sceneManager, {
-      accent: 0x7fd0ff,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
-    }));
+
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+    camera.position.z = 100;
+    this.threeScenes.six = { scene, camera, renderer, particleSystem, velocities, particles };
   }
 
   setupFourScene() {
     const canvas = document.getElementById('four-canvas');
     if (!canvas) return;
-    const sceneManager = new SceneManager(canvas, {
-      accent: 0xffc768,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const particleCount = 300;
+    const particles = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i += 1) {
+      positions[i * 3] = (Math.random() - 0.5) * 100;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+    }
+
+    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+      color: 0xffb22e,
+      size: 2,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending
     });
-    this.threeScenes.four = sceneManager;
-    this.animationManager.register('FOUR', new FourAnimationController(sceneManager, {
-      accent: 0xffc768,
-      wicket: 0xff315d,
-      six: 0x7fd0ff,
-      four: 0xffc768
-    }));
+
+    const particleSystem = new THREE.Points(particles, particleMaterial);
+    scene.add(particleSystem);
+    camera.position.z = 80;
+    this.threeScenes.four = { scene, camera, renderer, particleSystem, particles };
   }
 
   setupIntroScene() {
@@ -675,21 +741,42 @@ class CricketGraphicsEngine {
   }
 
   updateThreeJSScenes() {
-    if (this.animationManager) {
-      const delta = 1 / 60;
-      this.animationManager.update(delta);
-    }
-
     if (this.threeScenes.wicket && !this.layers.wicketAnimation.classList.contains('hidden')) {
-      this.threeScenes.wicket.render();
+      const { scene, camera, renderer, particleSystem, velocities, particles } = this.threeScenes.wicket;
+      const positions = particles.attributes.position.array;
+      for (let i = 0; i < 200; i += 1) {
+        positions[i * 3] += velocities[i].x * 0.1;
+        positions[i * 3 + 1] += velocities[i].y * 0.1;
+        positions[i * 3 + 2] += velocities[i].z * 0.1;
+        velocities[i].y -= 0.1;
+      }
+      particles.attributes.position.needsUpdate = true;
+      particleSystem.rotation.y += 0.01;
+      renderer.render(scene, camera);
     }
 
     if (this.threeScenes.six && !this.layers.sixAnimation.classList.contains('hidden')) {
-      this.threeScenes.six.render();
+      const { scene, camera, renderer, particleSystem, velocities, particles } = this.threeScenes.six;
+      const positions = particles.attributes.position.array;
+      for (let i = 0; i < 500; i += 1) {
+        positions[i * 3] += velocities[i].x;
+        positions[i * 3 + 1] += velocities[i].y;
+        positions[i * 3 + 2] += velocities[i].z;
+      }
+      particles.attributes.position.needsUpdate = true;
+      particleSystem.rotation.z += 0.005;
+      renderer.render(scene, camera);
     }
 
     if (this.threeScenes.four && !this.layers.fourAnimation.classList.contains('hidden')) {
-      this.threeScenes.four.render();
+      const { scene, camera, renderer, particles } = this.threeScenes.four;
+      const positions = particles.attributes.position.array;
+      for (let i = 0; i < 300; i += 1) {
+        positions[i * 3] += 0.5;
+        if (positions[i * 3] > 50) positions[i * 3] = -50;
+      }
+      particles.attributes.position.needsUpdate = true;
+      renderer.render(scene, camera);
     }
 
     if (this.threeScenes.intro && !this.layers.intro.classList.contains('hidden')) {
@@ -1010,25 +1097,65 @@ class CricketGraphicsEngine {
       document.getElementById('wicket-dismissal').textContent = `${this.currentState.lastWicket.dismissal} b ${this.currentState.lastWicket.bowler}`;
       document.getElementById('wicket-figures').textContent = `${this.currentState.lastWicket.runs} runs (${this.currentState.lastWicket.balls} balls)`;
     }
-    this.animationManager?.triggerAnimation('WICKET', {
-      player: this.currentState.lastWicket?.player,
-      bowler: this.currentState.lastWicket?.bowler
-    });
+
+    if (this.threeScenes.wicket) {
+      const { particles, velocities } = this.threeScenes.wicket;
+      const positions = particles.attributes.position.array;
+
+      for (let i = 0; i < 200; i += 1) {
+        positions[i * 3] = 0;
+        positions[i * 3 + 1] = 0;
+        positions[i * 3 + 2] = 0;
+        velocities[i].x = (Math.random() - 0.5) * 20;
+        velocities[i].y = Math.random() * 20;
+        velocities[i].z = (Math.random() - 0.5) * 20;
+      }
+
+      particles.attributes.position.needsUpdate = true;
+    }
 
     this.restartAnimations([
       '.wicket-kicker',
+      '.stump',
+      '.bail-left',
+      '.bail-right',
+      '.wicket-ball-trail',
+      '.wicket-ball-impact',
+      '.wicket-shockring',
+      '.wicket-slash',
       '.wicket-text'
     ]);
   }
 
   triggerSixAnimation() {
     document.getElementById('six-player').textContent = this.currentState.striker.name;
-    this.animationManager?.triggerAnimation('SIX', {
-      player: this.currentState.striker.name
-    });
+
+    if (this.threeScenes.six) {
+      const { particles, velocities } = this.threeScenes.six;
+      const positions = particles.attributes.position.array;
+
+      for (let i = 0; i < 500; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 30;
+        positions[i * 3] = Math.cos(angle) * radius;
+        positions[i * 3 + 1] = Math.sin(angle) * radius;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+        velocities[i].x = Math.cos(angle) * (2 + Math.random() * 3);
+        velocities[i].y = Math.sin(angle) * (2 + Math.random() * 3);
+        velocities[i].z = (Math.random() - 0.5) * 2;
+      }
+
+      particles.attributes.position.needsUpdate = true;
+    }
 
     this.restartAnimations([
       '.six-kicker',
+      '.six-grid',
+      '.six-halo',
+      '.six-orbit-ring',
+      '.orbit-secondary',
+      '.six-ball-flight',
+      '.six-comet-tail',
       '.six-number',
       '.six-text'
     ]);
@@ -1036,11 +1163,12 @@ class CricketGraphicsEngine {
 
   triggerFourAnimation() {
     document.getElementById('four-player').textContent = this.currentState.striker.name;
-    this.animationManager?.triggerAnimation('FOUR', {
-      player: this.currentState.striker.name
-    });
+
     this.restartAnimations([
       '.four-kicker',
+      '.four-scan',
+      '.four-lane',
+      '.four-ball-dash',
       '.four-number',
       '.four-text'
     ]);
