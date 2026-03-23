@@ -322,26 +322,32 @@ class WicketAnimationController extends EventAnimationController {
     if (!this.active) return;
     this.time += delta;
 
-    const hitProgress = Math.min(1, this.time / 0.7);
+    const hitProgress = Math.min(1, this.time / 0.82);
     this.ball.position.set(
       THREE.MathUtils.lerp(-4.5, 0.12, hitProgress),
       THREE.MathUtils.lerp(-0.7, -0.62, hitProgress),
       THREE.MathUtils.lerp(3.2, 0.18, hitProgress)
     );
 
-    if (this.time > 0.48 && !this.impactTriggered) {
+    if (!this.impactTriggered) {
+      this.particles.spawnTrail(this.ball.position.clone(), this.palette.wicket, 0.7);
+    }
+
+    if (this.time > 0.56 && !this.impactTriggered) {
       this.impactTriggered = true;
       this.flash();
-      this.cameraController.addShake(0.26);
-      this.cameraController.moveTo(new THREE.Vector3(0.8, 1.2, 7.4), new THREE.Vector3(0, -0.6, 0));
-      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: this.palette.wicket, count: 240, spread: 11, lift: 10, life: 1.4, size: 0.18 });
-      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: 0xffffff, count: 90, spread: 6, lift: 6, life: 0.75, size: 0.12 });
+      this.cameraController.addShake(0.34);
+      this.cameraController.moveTo(new THREE.Vector3(1.1, 1.4, 6.8), new THREE.Vector3(0, -0.55, 0));
+      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: this.palette.wicket, count: 280, spread: 12, lift: 11, life: 1.5, size: 0.2 });
+      this.particles.spawnBurst(new THREE.Vector3(0, -0.55, 0), { color: 0xffffff, count: 120, spread: 7, lift: 7, life: 0.85, size: 0.12 });
+      this.particles.spawnBurst(new THREE.Vector3(0, -1.5, 0), { color: 0xffb3c3, count: 90, spread: 8, lift: 4, depth: 2, life: 0.9, size: 0.15, gravity: 4 });
       this.particles.spawnShockwave(new THREE.Vector3(0, -2.48, 0), this.palette.wicket);
+      this.particles.spawnShockwave(new THREE.Vector3(0, -2.45, 0), 0xffffff);
       this.stumps.forEach((stump) => { stump.visible = false; });
       this.fragments.forEach((fragment, index) => {
         fragment.visible = true;
         fragment.position.set((Math.random() - 0.5) * 0.6, -0.8 + Math.random() * 1.8, (Math.random() - 0.5) * 0.6);
-        this.fragmentVelocities[index].set((Math.random() - 0.5) * 7, Math.random() * 8, (Math.random() - 0.5) * 4);
+        this.fragmentVelocities[index].set((Math.random() - 0.5) * 8.5, Math.random() * 9.5, (Math.random() - 0.5) * 5.5);
       });
     }
 
@@ -351,11 +357,12 @@ class WicketAnimationController extends EventAnimationController {
         fragment.position.addScaledVector(velocity, delta);
         fragment.rotation.x += delta * 9;
         fragment.rotation.y += delta * 7;
-        velocity.y -= delta * 10;
+        velocity.y -= delta * 11.5;
+        this.particles.spawnTrail(fragment.position.clone(), 0xffc7d3, 0.34);
       });
     }
 
-    if (this.time > 1.8) {
+    if (this.time > 2.05) {
       this.active = false;
     }
   }
@@ -511,6 +518,7 @@ class CricketGraphicsEngine {
   }
 
   init() {
+    document.body.classList.add('modern-event-mode');
     this.connectWebSocket();
     this.setupGraphics();
     this.setupResizeHandler();
@@ -1009,13 +1017,6 @@ class CricketGraphicsEngine {
 
     this.restartAnimations([
       '.wicket-kicker',
-      '.stump',
-      '.bail-left',
-      '.bail-right',
-      '.wicket-ball-trail',
-      '.wicket-ball-impact',
-      '.wicket-shockring',
-      '.wicket-slash',
       '.wicket-text'
     ]);
   }
@@ -1028,12 +1029,6 @@ class CricketGraphicsEngine {
 
     this.restartAnimations([
       '.six-kicker',
-      '.six-grid',
-      '.six-halo',
-      '.six-orbit-ring',
-      '.orbit-secondary',
-      '.six-ball-flight',
-      '.six-comet-tail',
       '.six-number',
       '.six-text'
     ]);
@@ -1046,9 +1041,6 @@ class CricketGraphicsEngine {
     });
     this.restartAnimations([
       '.four-kicker',
-      '.four-scan',
-      '.four-lane',
-      '.four-ball-dash',
       '.four-number',
       '.four-text'
     ]);

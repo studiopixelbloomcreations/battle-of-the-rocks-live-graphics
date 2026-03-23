@@ -166,6 +166,18 @@
     linear-gradient(135deg, rgba(9, 12, 22, 0.26), rgba(37, 8, 16, 0.32), rgba(9, 12, 22, 0.26));
 }
 
+body.modern-event-mode .wicket-shockring,
+body.modern-event-mode .wicket-slash,
+body.modern-event-mode .wicket-scene,
+body.modern-event-mode .wicket-burst,
+body.modern-event-mode .six-grid,
+body.modern-event-mode .six-flight-scene,
+body.modern-event-mode .six-particles,
+body.modern-event-mode .four-scan,
+body.modern-event-mode .four-streak-scene {
+  display: none !important;
+}
+
 .wicket-shockring,
 .wicket-slash {
   position: absolute;
