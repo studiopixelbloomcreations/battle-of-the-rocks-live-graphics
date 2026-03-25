@@ -77,16 +77,6 @@
   justify-content: center;
 }
 
-#batting-card-root {
-  width: 1120px;
-}
-
-.batting-card-liquid-shell {
-  width: 1120px;
-  border-radius: 28px;
-  box-shadow: 0 38px 90px rgba(0, 0, 0, 0.5);
-}
-
 .batting-card-shell {
   position: relative;
   width: 1120px;
@@ -306,15 +296,6 @@
   padding-left: 60px;
 }
 
-#player-stats-root {
-  display: flex;
-}
-
-.player-liquid-shell {
-  border-radius: 34px;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.46);
-}
-
 .player-panel {
   display: flex;
   align-items: center;
@@ -429,16 +410,6 @@
   padding-bottom: 180px;
 }
 
-#bowler-stats-root {
-  min-width: 640px;
-}
-
-.bowler-liquid-shell {
-  min-width: 640px;
-  border-radius: 28px;
-  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.46);
-}
-
 .bowler-panel {
   min-width: 640px;
   padding: 30px 42px;
@@ -519,18 +490,6 @@
   background: rgba(1, 5, 14, 0.5);
 }
 
-#match-summary-root,
-#team-comparison-root {
-  min-width: 820px;
-}
-
-.summary-liquid-shell,
-.comparison-liquid-shell {
-  min-width: 820px;
-  border-radius: 34px;
-  box-shadow: 0 40px 110px rgba(0, 0, 0, 0.5);
-}
-
 .summary-container,
 .comparison-container {
   min-width: 820px;
@@ -598,27 +557,6 @@
   display: flex;
   align-items: center;
   gap: 18px;
-}
-
-body.react-liquid-glass-active .batting-card-shell,
-body.react-liquid-glass-active .player-panel,
-body.react-liquid-glass-active .bowler-panel,
-body.react-liquid-glass-active .summary-container,
-body.react-liquid-glass-active .comparison-container {
-  border: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-
-body.react-liquid-glass-active .batting-card-shell {
-  background: linear-gradient(180deg, rgba(31, 59, 12, 0.18), rgba(52, 92, 18, 0.05));
-}
-
-body.react-liquid-glass-active .player-panel,
-body.react-liquid-glass-active .bowler-panel,
-body.react-liquid-glass-active .summary-container,
-body.react-liquid-glass-active .comparison-container {
-  background: linear-gradient(180deg, rgba(6, 14, 29, 0.18), rgba(14, 29, 51, 0.05));
 }
 
 .comp-team-badge {
