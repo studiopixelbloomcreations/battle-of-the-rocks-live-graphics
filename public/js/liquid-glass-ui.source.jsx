@@ -1,18 +1,21 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Vaso } from 'vaso';
+import { LiquidGlass } from '@liquidglass/react';
 
 function ScorebugGlass() {
   return (
     <div className="scorebug-container">
-      <Vaso
-        className="scorebug-vaso-shell"
-        px={14}
-        py={14}
-        radius={34}
-        depth={1.05}
-        blur={0.42}
-        dispersion={0.45}
+      <LiquidGlass
+        className="scorebug-liquidglass-shell"
+        borderRadius={34}
+        blur={0.2}
+        contrast={1.04}
+        brightness={0.82}
+        saturation={1.05}
+        shadowIntensity={0.18}
+        displacementScale={0.55}
+        elasticity={0.28}
+        zIndex={1}
       >
         <div className="scorebug-glass">
           <div className="scorebug-liquid"></div>
@@ -77,7 +80,7 @@ function ScorebugGlass() {
             </div>
           </div>
         </div>
-      </Vaso>
+      </LiquidGlass>
     </div>
   );
 }
@@ -88,7 +91,7 @@ function mountLiquidGlassUI() {
     return;
   }
 
-  document.body.classList.add('scorebug-vaso-active');
+  document.body.classList.add('scorebug-liquidglass-active');
   createRoot(scorebugRoot).render(<ScorebugGlass />);
   scorebugRoot.dataset.mounted = 'true';
 }
