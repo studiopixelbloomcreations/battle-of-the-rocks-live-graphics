@@ -3,8 +3,17 @@
   padding-bottom: 112px;
 }
 
+#lower-third-root {
+  animation: slideInBottom 0.55s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
 .lt-container {
   animation: slideInBottom 0.55s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.lt-liquid-shell {
+  border-radius: 999px;
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.42);
 }
 
 .lt-bar {
@@ -14,31 +23,13 @@
   gap: 18px;
   padding: 16px 24px 16px 16px;
   border-radius: 999px;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.18), transparent 20%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
-    linear-gradient(180deg, rgba(7, 14, 27, 0.96), rgba(12, 24, 42, 0.88));
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 26px 60px rgba(0, 0, 0, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -22px 36px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(34px) saturate(170%);
+  background: linear-gradient(180deg, rgba(7, 14, 27, 0.28), rgba(12, 24, 42, 0.08));
   overflow: hidden;
 }
 
-.lt-liquid,
 .lt-chrome {
   position: absolute;
   pointer-events: none;
-}
-
-.lt-liquid {
-  inset: 0;
-  background:
-    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.22), transparent 16%),
-    radial-gradient(circle at 36% 0%, rgba(135, 204, 255, 0.16), transparent 22%),
-    linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent 56%);
 }
 
 .lt-chrome {
@@ -857,4 +848,11 @@
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+body.react-liquid-glass-active .lt-bar {
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  background: linear-gradient(180deg, rgba(7, 14, 27, 0.16), rgba(12, 24, 42, 0.04));
 }
