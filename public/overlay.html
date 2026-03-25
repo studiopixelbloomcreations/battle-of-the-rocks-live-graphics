@@ -44,71 +44,7 @@
     </div>
 
     <div id="scorebug" class="graphic-layer">
-      <div class="scorebug-container">
-        <div class="scorebug-glass">
-          <div class="scorebug-liquid"></div>
-          <div class="scorebug-chrome chrome-a"></div>
-          <div class="scorebug-chrome chrome-b"></div>
-          <div class="scorebug-main-row">
-            <div class="team-section batting">
-              <div class="team-flag circular-media" id="batting-flag"><span>MI</span></div>
-              <div class="team-info">
-                <span class="team-nameplate" id="scorebug-team-name">MUMBAI INDIANS</span>
-                <div class="team-scoreline">
-                  <span class="team-score" id="batting-score">142-3</span>
-                  <span class="team-overs" id="batting-overs">14.2 OV</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="scorebug-center">
-              <div class="match-topline">
-                <div class="match-chip" id="scorebug-context">PROJECTED 199</div>
-                <div class="match-chip soft" id="run-rate">RR 9.95</div>
-                <div class="match-status" id="match-status">LIVE</div>
-              </div>
-              <div class="batsmen-section">
-                <div class="batsman striker" id="striker">
-                  <span class="batsman-name">Rohit Sharma</span>
-                  <span class="batsman-stats">58* (32)</span>
-                </div>
-                <div class="batsman non-striker" id="non-striker">
-                  <span class="batsman-name">Suryakumar Y</span>
-                  <span class="batsman-stats">42 (28)</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="scorebug-side">
-              <div class="bowler-section">
-                <div class="bowler-label">Bowler</div>
-                <div class="bowler-name" id="bowler-name">Chahar</div>
-                <div class="bowler-figures" id="bowler-figures">3.2-0-28-1</div>
-              </div>
-              <div class="this-over">
-                <div class="over-label">This Over</div>
-                <div class="over-balls" id="this-over"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="win-predictor-inline">
-            <div class="win-predictor-head">
-              <span class="predictor-kicker">Win Predictor</span>
-              <div class="predictor-values">
-                <span id="wp-team1-text">MI 68%</span>
-                <span class="predictor-divider">|</span>
-                <span id="wp-team2-text">CSK 32%</span>
-              </div>
-            </div>
-            <div class="win-predictor-track">
-              <div class="predictor-fill predictor-fill-team1" id="wp-team1-fill"></div>
-              <div class="predictor-blend-zone" id="wp-blend-zone"></div>
-              <div class="predictor-fill predictor-fill-team2" id="wp-team2-fill"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="scorebug-root"></div>
     </div>
 
     <div id="full-scoreboard" class="graphic-layer hidden">
@@ -296,6 +232,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
   <script src="js/sync.js"></script>
+  <script src="js/liquid-glass-ui.js"></script>
   <script src="js/overlay.js"></script>
 </body>
 </html>
